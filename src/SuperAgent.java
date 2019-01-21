@@ -7,20 +7,11 @@ import java.util.regex.Pattern;
 public class SuperAgent implements Agent
 {
 	private Stack<String> actions;
-	
-	public class State
-	{
-		short dirts;
-		short posx;
-		short posy;
-		char orientation; //from 0-3 use modulo 4 when turning
-		boolean on;
-	}
 	private State environment;
-	private int homex;
-	private int homey;
-	private int sizex;
-	private int sizey;
+	public static  int homex;
+	public static  int homey;
+	public static int sizex;
+	public static int sizey;
 	private char[] field;
 	/*
 		init(Collection<String> percepts) is called once before you have to select the first action. Use it to find a plan. Store the plan and just execute it step by step in nextAction.
@@ -46,7 +37,6 @@ public class SuperAgent implements Agent
 				if (perceptName.equals("HOME")) {
 					Matcher m = Pattern.compile("\\(\\s*HOME\\s+([0-9]+)\\s+([0-9]+)\\s*\\)").matcher(percept);
 					if (m.matches()) {
-						System.out.println("robot is at " + m.group(1) + "," + m.group(2));
 						this.homex = Integer.parseInt(m.group(1));
 						this.homey = Integer.parseInt(m.group(2));
 						this.environment.posx = Short.parseShort(m.group(1));
@@ -54,22 +44,18 @@ public class SuperAgent implements Agent
 					}
 				}
 				else if (perceptName.equals("ORIENTATION")) {
-					Matcher m = Pattern.compile("\\(\\s*ORIENTATION\\s+(\\w)\\)").matcher(percept);
+					Matcher m = Pattern.compile("\\(\\s*ORIENTATION\\s+(\\w+)\\)").matcher(percept);
 					if (m.matches()) {
-						System.out.println("Orientation is: " + m.group(1));
 						this.environment.orientation = m.group(1).charAt(0);
 					}
 				}
 				else if (perceptName.equals("SIZE")) {
 					Matcher m = Pattern.compile("\\(\\s*SIZE\\s+([0-9]+)\\s+([0-9]+)\\s*\\)").matcher(percept);
 					if (m.matches()) {
-						System.out.println("Size is " + m.group(1) + "," + m.group(2));
 						this.sizex = Integer.parseInt(m.group(1));
 						this.sizey = Integer.parseInt(m.group(2));
 						this.field = new char[sizex * sizey];
 					}
-				} else {
-					System.out.println("other percept:" + percept);
 				}
 				
 			} else {
@@ -83,19 +69,14 @@ public class SuperAgent implements Agent
 				if (perceptName.equals("AT")) {
 					Matcher m = Pattern.compile("\\(\\s*AT DIRT\\s+([0-9]+)\\s+([0-9]+)\\s*\\)").matcher(percept);
 					if (m.matches()) {
-						System.out.println("Dirt is at " + m.group(1) + "," + m.group(2));
 						this.environment.dirts++;
 						this.field[(Integer.parseInt(m.group(1)) - 1) + (Integer.parseInt(m.group(2)) - 1) * sizey] = 'D';
 					}
 					m = Pattern.compile("\\(\\s*AT OBSTACLE\\s+([0-9]+)\\s+([0-9]+)\\s*\\)").matcher(percept);
 					if (m.matches()) {
-						System.out.println("Obstacle is at " + m.group(1) + "," + m.group(2));
 						this.field[(Integer.parseInt(m.group(1)) - 1) + (Integer.parseInt(m.group(2)) - 1) * sizey] = 'O';
 					}
-				} else {
-					System.out.println("other percept:" + percept);
 				}
-				
 			} else {
 				System.err.println("strange percept that does not match pattern: " + percept);
 			}
@@ -116,13 +97,15 @@ public class SuperAgent implements Agent
 			}
 			System.out.print("\n");
 		}
+		BFS bfs = new BFS(environment);
+		System.out.println(bfs.search());
     }
 
     public String nextAction(Collection<String> percepts) {
+    	for(String percept:percepts)
+    	{
+    		System.out.println(percept);
+    	}
 		return "";
 	}
-    private void countDirt()
-    {
-    	
-    }
 }
