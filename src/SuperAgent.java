@@ -8,11 +8,11 @@ public class SuperAgent implements Agent
 {
 	private Stack<String> actions;
 	private State environment;
-	public static  int homex;
-	public static  int homey;
-	public static int sizex;
-	public static int sizey;
-	private char[] field;
+	public Point home;
+	public Point size; // the greatest point in the field
+	public Point[] dirt;
+	public boolean[][] obstacles;
+	public int dirtsCount;
 	/*
 		init(Collection<String> percepts) is called once before you have to select the first action. Use it to find a plan. Store the plan and just execute it step by step in nextAction.
 	*/
@@ -28,7 +28,6 @@ public class SuperAgent implements Agent
 			The robot is turned off initially, so don't forget to turn it on.
 		*/
     	environment = new State();
-    	environment.dirts = 0;
 		Pattern perceptNamePattern = Pattern.compile("\\(\\s*([^\\s]+).*");
 		for (String percept:percepts) {
 			Matcher perceptNameMatcher = perceptNamePattern.matcher(percept);
@@ -37,8 +36,7 @@ public class SuperAgent implements Agent
 				if (perceptName.equals("HOME")) {
 					Matcher m = Pattern.compile("\\(\\s*HOME\\s+([0-9]+)\\s+([0-9]+)\\s*\\)").matcher(percept);
 					if (m.matches()) {
-						this.homex = Integer.parseInt(m.group(1));
-						this.homey = Integer.parseInt(m.group(2));
+						this.obstacles = new boolean[Integer.parseInt(m.group(2))][Integer.parseInt(m.group(1))];
 						this.environment.posx = Short.parseShort(m.group(1));
 						this.environment.posy = Short.parseShort(m.group(2));
 					}
@@ -52,16 +50,24 @@ public class SuperAgent implements Agent
 				else if (perceptName.equals("SIZE")) {
 					Matcher m = Pattern.compile("\\(\\s*SIZE\\s+([0-9]+)\\s+([0-9]+)\\s*\\)").matcher(percept);
 					if (m.matches()) {
-						this.sizex = Integer.parseInt(m.group(1));
-						this.sizey = Integer.parseInt(m.group(2));
-						this.field = new char[sizex * sizey];
+						System.out.println("size:");
+						this.size = new Point(Integer.parseInt(m.group(1)),Integer.parseInt(m.group(2)));
+						this.obstacles = new boolean[size.y][size.x];
 					}
 				}
-				
+				else if (perceptName.equals("AT")) {
+					Matcher m = Pattern.compile("\\(\\s*AT DIRT\\s+([0-9]+)\\s+([0-9]+)\\s*\\)").matcher(percept);
+					if (m.matches()) {
+						this.dirtsCount++;
+					}
+				}
 			} else {
 				System.err.println("strange percept that does not match pattern: " + percept);
 			}
 		}
+		this.dirt = new Point[this.dirtsCount];
+		int i = 0;
+		int j = 0;
 		for (String percept:percepts) {
 			Matcher perceptNameMatcher = perceptNamePattern.matcher(percept);
 			if (perceptNameMatcher.matches()) {
@@ -69,36 +75,30 @@ public class SuperAgent implements Agent
 				if (perceptName.equals("AT")) {
 					Matcher m = Pattern.compile("\\(\\s*AT DIRT\\s+([0-9]+)\\s+([0-9]+)\\s*\\)").matcher(percept);
 					if (m.matches()) {
-						this.environment.dirts++;
-						this.field[(Integer.parseInt(m.group(1)) - 1) + (Integer.parseInt(m.group(2)) - 1) * sizey] = 'D';
+						this.dirt[i] = new Point(Integer.parseInt(m.group(1)),Integer.parseInt(m.group(2)));
+						i++;
 					}
 					m = Pattern.compile("\\(\\s*AT OBSTACLE\\s+([0-9]+)\\s+([0-9]+)\\s*\\)").matcher(percept);
 					if (m.matches()) {
-						this.field[(Integer.parseInt(m.group(1)) - 1) + (Integer.parseInt(m.group(2)) - 1) * sizey] = 'O';
+						this.obstacles[Integer.parseInt(m.group(2)) - 1][Integer.parseInt(m.group(1)) - 1] = true;
 					}
 				}
 			} else {
 				System.err.println("strange percept that does not match pattern: " + percept);
 			}
 		}
-		System.out.println("home: " + this.homex + "," + this.homey + "\nsizex: " + this.sizex + "," + this.sizey);
-		System.out.println(environment.dirts);
+		this.environment.dirts = new boolean[dirtsCount];
 		System.out.println(environment.posx);
 		System.out.println(environment.posy);
 		System.out.println(environment.orientation);
 		System.out.println(environment.on);
-		field[(homey - 1)*sizey + homex - 1] = 'H';
-		for (int i = 0; i < sizey; i++)
+		for(int k = 0; k < 5; k++)
 		{
-			for (int j = 0; j < sizex; j++)
-			{
-				System.out.print(field[i*sizey + j] + " ");
-				
-			}
-			System.out.print("\n");
+			System.out.println(environment.dirts[k]);
+			System.out.println(dirt[k].x + " " + dirt[k].y);
 		}
 		BFS bfs = new BFS(environment);
-		System.out.println(bfs.search());
+		System.out.println(bfs.search(dirt, obstacles));
     }
 
     public String nextAction(Collection<String> percepts) {

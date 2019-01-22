@@ -1,10 +1,12 @@
 public class State
 	{
-		short dirts;
+		boolean[] dirts;
 		short posx;
 		short posy;
 		char orientation; //from 0-3 use modulo 4 when turning
 		boolean on;
+		String lastAction;
+		
 		String[] actions = new String[] {"TURN_LEFT", "TURN_RIGHT", "GO"};
 		public State(){}
 		public State(State state)
@@ -82,7 +84,7 @@ public class State
 	    }
 	    public boolean goalState (State state)
 	    {
-	    	return (state.dirts == 0 && state.posx == SuperAgent.homex && state.posy == SuperAgent.homey);
+	    	return (state.posx == 5 && state.posy == 5);
 	    }
 	    private State go(State state)
 	    {
@@ -94,11 +96,11 @@ public class State
 	    	{
 	    		state.posx--;
 	    	}
-	    	else if(state.orientation == 'S' && state.posx != SuperAgent.sizex)
+	    	else if(state.orientation == 'S' && state.posx != 5)
 	    	{
 	    		state.posy++;
 	    	}
-	    	else if (state.orientation == 'E' && state.posx != SuperAgent.sizey)
+	    	else if (state.orientation == 'E' && state.posx != 5)
 	    	{
 	    		state.posx++;
 	    	}
