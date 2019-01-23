@@ -1,6 +1,6 @@
 
 public class Node{
-		private Node parent;
+		public Node parent;
 		public Node[] children;
 		public State state;
 		public String[] availableActions;
@@ -9,7 +9,7 @@ public class Node{
 			this.state = state;
 			this.parent = null;
 		}
-		public Node(State state, Node parent, String[] s)
+		public Node(State state, Node parent)
 		{
 			this.parent = parent;
 			this.state = state;

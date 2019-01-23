@@ -1,3 +1,5 @@
+import java.util.Stack;
+
 public class State
 	{
 		boolean[] dirts;
@@ -6,7 +8,7 @@ public class State
 		char orientation; //from 0-3 use modulo 4 when turning
 		boolean on;
 		String lastAction;
-		String[] actions;
+		Stack<String> actions;
 		
 		public State(){}
 		public State(State state)
@@ -18,52 +20,56 @@ public class State
 			this.on = state.on;
 			this.lastAction = state.lastAction;
 		}
-		public String[] listOfActions(State state, Point[] dirts, boolean[][] obstacles, Point size)
+		public void listOfActions(Node node, Point[] dirts, boolean[][] obstacles, Point size)
 	    {
-			boolean go = true;
-			boolean left = true;
-			boolean right = true;
+			Stack <String> stack = new Stack<String>() ;
 			for(int i = 0; i < dirts.length; i++)
 			{
+				//System.out.print(dirts[i].x);
 				if(this.posx == dirts[i].x && this.posy == dirts[i].y && !this.dirts[i])
 				{
 					this.dirts[i] = true;
-					return new String[] {"SUCK"};
+					stack.push("SUCK");
+					actions = stack;
+					return;
 				}
 			}
-			go =  (((orientation == 'N' && posy == 1) || obstacles[posy - 2][posx - 1])
-				|| ((orientation == 'W' && posx == 1) || obstacles[posy - 1][posx - 2])
-				|| ((orientation == 'E' && posy == size.x) || obstacles[posy - 1][posx])
-				|| ((orientation == 'S' && posy == size.y) || obstacles[posy][posx - 1]));
-			/*if((orientation == 'N' && posy == 1) || obstacles[posy - 2][posx - 1])
+			if(!this.lastAction.equals("TURN_RIGHT") )
 			{
-				go = false;
+				stack.push("TURN_LEFT");
 			}
-			else if((orientation == 'W' && posx == 1) || obstacles[posy - 1][posx - 2])
+			//System.out.println(orientation + " " + posy + " " + obstacles[posy - 1][posx - 1]);
+
+			if(orientation == 'N' && (posy == 1 || obstacles[posy - 2][posx - 1]))
 			{
-				go = false;
 			}
-			else if((orientation == 'E' && posy == size.x) || obstacles[posy - 1][posx])
+			else if(orientation == 'W' && (posx == 1 || obstacles[posy - 1][posx - 2]))
 			{
-				go = false;
 			}
-			else if((orientation == 'S' && posy == size.y) || obstacles[posy][posx - 1])
+			else if(orientation == 'E' && (posx == size.x || obstacles[posy - 1][posx]))
 			{
-				go = false;
-			}*/
-			if(this.lastAction == "TURN_LEFT")
-			{
-				right = false;
 			}
-			if(this.lastAction == "TURN_RIGHT")
+			else if(orientation == 'S' && (posy == size.y || obstacles[posy][posx - 1]))
 			{
-				left = false;
 			}
-	    	return actions;
+			else
+			{
+				stack.push("GO");
+			}
+			if(!this.lastAction.equals("TURN_LEFT"))
+			{
+				stack.push("TURN_RIGHT");
+			}
+			if(node.parent != null && node.parent.parent != null
+			&& node.parent.state.lastAction.equals(node.parent.parent.state.lastAction)
+			&& !node.parent.state.lastAction.equals("GO"))
+			{
+				stack.remove(node.parent.state.lastAction);
+			}
+	    	actions = stack;
 	    }
 		public State act(String s)
 		{
-			System.out.println("string: " + s);
 			State state = new State(this);
 			if(s.equals("SUCK"))
 			{
@@ -77,7 +83,6 @@ public class State
 			{
 				return turnRight(state);
 			}
-			
 			else
 			{
 				return go(state);
@@ -101,7 +106,7 @@ public class State
 	    	{
 	    		state.orientation = 'N';
 	    	}
-	    	actions = new String[] {"TURN_LEFT", "GO"};
+	    	state.lastAction = "TURN_LEFT";
 	    	return state;
 	    	
 	    }
@@ -123,38 +128,54 @@ public class State
 	    	{
 	    		state.orientation = 'S';
 	    	}
-	    	actions = new String[] {"TURN_RIGHT", "GO"};
+	    	state.lastAction = "TURN_RIGHT";
 	    	return state;
 	    	
 	    }
-	    private State suck(State state, int index)
+	    private State suck(State state)
 	    {
-	    	state.dirts[index] = true;
+	    	System.out.println("SUCC");
+	    	state.lastAction = "SUCK";
 	    	return state;
 	    }
-	    public boolean goalState (State state)
+	    public boolean goalState (State state, Point home)
 	    {
-	    	return (state.posx == 5 && state.posy == 5);
+	    	for(boolean dirt:dirts)
+	    	{
+	    		
+	    		if(dirt)
+	    		{
+	    			System.out.print("dirt: " + dirt);
+	    			continue;
+	    		}
+	    		else
+	    		{
+	    			System.out.print("   ");
+	    			return false;
+	    		}
+	    	}
+	    	System.out.print(" " + state.posx + " " + state.posy + "\n");
+	    	return (state.posx == home.x && state.posy == home.y);
 	    }
 	    private State go(State state)
 	    {
-	    	if(state.orientation == 'N' && state.posy != 1)
+	    	if(state.orientation == 'N')
 	    	{
 	    		state.posy--;
 	    	}
-	    	else if(state.orientation == 'W' && state.posx != 1)
+	    	else if(state.orientation == 'W')
 	    	{
 	    		state.posx--;
 	    	}
-	    	else if(state.orientation == 'S' && state.posx != 5)
+	    	else if(state.orientation == 'S')
 	    	{
 	    		state.posy++;
 	    	}
-	    	else if (state.orientation == 'E' && state.posx != 5)
+	    	else if (state.orientation == 'E')
 	    	{
 	    		state.posx++;
 	    	}
-	    	actions = new String[] {"TURN_LEFT", "TURN_RIGHT", "GO"};
+	    	state.lastAction = "GO";
 	    	return state;
 	    }
 	}

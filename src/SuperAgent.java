@@ -1,5 +1,4 @@
 import java.util.Collection;
-import java.util.Random;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -97,14 +96,16 @@ public class SuperAgent implements Agent
 			System.out.println(dirt[k].x + " " + dirt[k].y);
 		}
 		BFS bfs = new BFS(environment);
-		System.out.println(bfs.search(dirt, obstacles, size));
+		Node node = bfs.search(dirt, obstacles, size, home);
+		actions.push("TURN_OFF");
+		while(node.parent != null)
+		{
+			actions.push(node.state.lastAction);
+			node = node.parent;
+		}
     }
 
     public String nextAction(Collection<String> percepts) {
-    	for(String percept:percepts)
-    	{
-    		System.out.println(percept);
-    	}
-		return "";
+    	return actions.pop();
 	}
 }

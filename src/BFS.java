@@ -7,29 +7,29 @@ public class BFS {
 	Queue<Node> que;
 	public BFS(State state)
 	{
+		state.lastAction = "TURN_ON";
 		root = new Node(state, new String[] {"TURN_ON"});
 		que = new ArrayDeque<Node>();
 		que.add(root);
 	}
-	public boolean search(Point[] dirts, boolean[][] obstacles, Point size)
+	public Node search(Point[] dirts, boolean[][] obstacles, Point size, Point home)
 	{
 		while(!que.isEmpty())
 		{
 			Node node = que.remove();
-			if(node.state.goalState(node.state))
+			if(node.state.goalState(node.state, home))
 			{
-				return true;
+				return node;
 			}
-			System.out.println("x:" + node.state.posx + " y:" + node.state.posy + " O:" + node.state.orientation);
-
-			Node[] nodes = new Node[node.availableActions.length];
-			for(int i = 0; i < nodes.length; i++)
+			//System.out.println("x:" + node.state.posx + " y:" + node.state.posy + " O:" + node.state.orientation);
+			node.state.listOfActions(node, dirts, obstacles, size);
+			
+			for(String string:node.state.actions)
 			{
-				nodes[i] = new Node(node.state.act(node.availableActions[i], dirts, obstacles, size), node);
-				que.add(nodes[i]);
+				//System.out.println("action:" + string);
+				que.add(new Node(node.state.act(string), node));
 			}
-			node.children = nodes;
 		}
-		return false;
+		return null;
 	}	
 }
