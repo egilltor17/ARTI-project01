@@ -7,16 +7,12 @@ public class BFS {
 	Queue<Node> que;
 	public BFS(State state)
 	{
-		System.out.println("Hello");
-		root = new Node(state);
+		root = new Node(state, new String[] {"TURN_ON"});
 		que = new ArrayDeque<Node>();
-		System.out.println("Hello");
 		que.add(root);
-		System.out.println("Hello");
 	}
-	public boolean search(Point[] dirts, boolean[][] obstacles)
+	public boolean search(Point[] dirts, boolean[][] obstacles, Point size)
 	{
-		System.out.println("Hello");
 		while(!que.isEmpty())
 		{
 			Node node = que.remove();
@@ -24,26 +20,16 @@ public class BFS {
 			{
 				return true;
 			}
-			String[] actions = node.state.listOfActions();
 			System.out.println("x:" + node.state.posx + " y:" + node.state.posy + " O:" + node.state.orientation);
-			for(int i = 0; i < dirts.length; i++)
+
+			Node[] nodes = new Node[node.availableActions.length];
+			for(int i = 0; i < nodes.length; i++)
 			{
-				if(node.state.posx == dirts[i].x && node.state.posy == dirts[i].y && !node.state.dirts[i])
-				{
-					actions = new String[] {"SUCK"};
-				}
-				
-			}
-			
-			Node[] nodes = new Node[actions.length];
-			for(int i = 0; i < actions.length; i++)
-			{
-				nodes[i] = new Node(node.state.act(actions[i]), node);
+				nodes[i] = new Node(node.state.act(node.availableActions[i], dirts, obstacles, size), node);
 				que.add(nodes[i]);
 			}
 			node.children = nodes;
 		}
 		return false;
-	}
-	
+	}	
 }

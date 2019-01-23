@@ -6,26 +6,70 @@ public class State
 		char orientation; //from 0-3 use modulo 4 when turning
 		boolean on;
 		String lastAction;
+		String[] actions;
 		
-		String[] actions = new String[] {"TURN_LEFT", "TURN_RIGHT", "GO"};
 		public State(){}
 		public State(State state)
 		{
-			this.dirts = state.dirts;
+			this.dirts = state.dirts.clone();
 			this.posx = state.posx;
 			this.posy = state.posy;
 			this.orientation = state.orientation;
 			this.on = state.on;
+			this.lastAction = state.lastAction;
 		}
-		public String[] listOfActions()
+		public String[] listOfActions(State state, Point[] dirts, boolean[][] obstacles, Point size)
 	    {
+			boolean go = true;
+			boolean left = true;
+			boolean right = true;
+			for(int i = 0; i < dirts.length; i++)
+			{
+				if(this.posx == dirts[i].x && this.posy == dirts[i].y && !this.dirts[i])
+				{
+					this.dirts[i] = true;
+					return new String[] {"SUCK"};
+				}
+			}
+			go =  (((orientation == 'N' && posy == 1) || obstacles[posy - 2][posx - 1])
+				|| ((orientation == 'W' && posx == 1) || obstacles[posy - 1][posx - 2])
+				|| ((orientation == 'E' && posy == size.x) || obstacles[posy - 1][posx])
+				|| ((orientation == 'S' && posy == size.y) || obstacles[posy][posx - 1]));
+			/*if((orientation == 'N' && posy == 1) || obstacles[posy - 2][posx - 1])
+			{
+				go = false;
+			}
+			else if((orientation == 'W' && posx == 1) || obstacles[posy - 1][posx - 2])
+			{
+				go = false;
+			}
+			else if((orientation == 'E' && posy == size.x) || obstacles[posy - 1][posx])
+			{
+				go = false;
+			}
+			else if((orientation == 'S' && posy == size.y) || obstacles[posy][posx - 1])
+			{
+				go = false;
+			}*/
+			if(this.lastAction == "TURN_LEFT")
+			{
+				right = false;
+			}
+			if(this.lastAction == "TURN_RIGHT")
+			{
+				left = false;
+			}
 	    	return actions;
 	    }
 		public State act(String s)
 		{
 			System.out.println("string: " + s);
 			State state = new State(this);
-			if(s.equals("TURN_LEFT"))
+			if(s.equals("SUCK"))
+			{
+				return suck(state);
+			}
+			else if(s.equals("TURN_LEFT"))
 			{
 				return turnLeft(state);
 			}
@@ -33,6 +77,7 @@ public class State
 			{
 				return turnRight(state);
 			}
+			
 			else
 			{
 				return go(state);
@@ -81,6 +126,11 @@ public class State
 	    	actions = new String[] {"TURN_RIGHT", "GO"};
 	    	return state;
 	    	
+	    }
+	    private State suck(State state, int index)
+	    {
+	    	state.dirts[index] = true;
+	    	return state;
 	    }
 	    public boolean goalState (State state)
 	    {

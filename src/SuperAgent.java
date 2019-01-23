@@ -67,7 +67,6 @@ public class SuperAgent implements Agent
 		}
 		this.dirt = new Point[this.dirtsCount];
 		int i = 0;
-		int j = 0;
 		for (String percept:percepts) {
 			Matcher perceptNameMatcher = perceptNamePattern.matcher(percept);
 			if (perceptNameMatcher.matches()) {
@@ -98,7 +97,7 @@ public class SuperAgent implements Agent
 			System.out.println(dirt[k].x + " " + dirt[k].y);
 		}
 		BFS bfs = new BFS(environment);
-		System.out.println(bfs.search(dirt, obstacles));
+		System.out.println(bfs.search(dirt, obstacles, size));
     }
 
     public String nextAction(Collection<String> percepts) {
