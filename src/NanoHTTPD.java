@@ -39,6 +39,7 @@ import java.net.*;
  * See the end of the source file for distribution license
  * (Modified BSD licence)
  */
+@SuppressWarnings("unchecked")
 public class NanoHTTPD
 {
 	// ==================================================
@@ -60,6 +61,7 @@ public class NanoHTTPD
 	{
 		System.out.println( method + " '" + uri + "' " );
 
+		@SuppressWarnings("rawtypes")
 		Enumeration e = header.propertyNames();
 		while ( e.hasMoreElements())
 		{
@@ -177,6 +179,7 @@ public class NanoHTTPD
 	{
 		myTcpPort = port;
 
+		@SuppressWarnings("resource")
 		final ServerSocket ss = new ServerSocket( myTcpPort );
 		server_thread = new Thread( new Runnable()
 			{
@@ -439,6 +442,7 @@ public class NanoHTTPD
 								
 				if ( header != null )
 				{
+					@SuppressWarnings("rawtypes")
 					Enumeration e = header.keys();
 					while ( e.hasMoreElements())
 					{
@@ -474,6 +478,7 @@ public class NanoHTTPD
 		}
 		
 		private Socket mySocket;
+		@SuppressWarnings("unused")
 		private BufferedReader myIn;
 	};
 	
@@ -504,6 +509,7 @@ public class NanoHTTPD
 	}	
 	
 	private int myTcpPort;
+	@SuppressWarnings("unused")
 	private File myFileDir;
 	
 	// ==================================================
@@ -656,6 +662,7 @@ public class NanoHTTPD
 	/**
 	 * Hashtable mapping (String)FILENAME_EXTENSION -> (String)MIME_TYPE
 	 */
+	@SuppressWarnings("rawtypes")
 	private static Hashtable theMimeTypes = new Hashtable();
 	static
 	{

@@ -1,5 +1,6 @@
 import java.io.IOException;
 
+@SuppressWarnings("unused")
 public class Main {
 	
 	/**

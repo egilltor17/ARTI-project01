@@ -1,6 +1,6 @@
 # Ant-made Binaries
-./bin
-/bin/
+/bin
+/dist
 # Eclipse
 .classpath
 .project
