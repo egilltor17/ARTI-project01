@@ -5,7 +5,7 @@ public class State
 		boolean[] dirts;
 		short posx;
 		short posy;
-		char orientation; //from 0-3 use modulo 4 when turning
+		char orientation;
 		boolean on;
 		String lastAction;
 		Stack<String> actions;
@@ -22,51 +22,55 @@ public class State
 		}
 		public void listOfActions(Node node, Point[] dirts, boolean[][] obstacles, Point size)
 	    {
-			Stack <String> stack = new Stack<String>() ;
+			actions = new Stack<String>();
 			for(int i = 0; i < dirts.length; i++)
 			{
 				//System.out.print(dirts[i].x);
 				if(this.posx == dirts[i].x && this.posy == dirts[i].y && !this.dirts[i])
 				{
 					this.dirts[i] = true;
-					stack.push("SUCK");
-					actions = stack;
+					actions.push("SUCK");
 					return;
 				}
 			}
-			if(!this.lastAction.equals("TURN_RIGHT") )
+			actions.push("TURN_LEFT");
+			actions.push("GO");
+			actions.push("TURN_RIGHT");
+			//prevents going in circles
+			if(node.parent != null && node.parent.parent != null
+			&& node.parent.state.lastAction.equals(node.parent.parent.state.lastAction)
+			&& !node.parent.state.lastAction.equals("GO"))
 			{
-				stack.push("TURN_LEFT");
+				actions.remove("TURN_LEFT");
+				actions.remove("TURN_RIGHT");
+
+			}
+			if(this.lastAction.equals("TURN_RIGHT") )
+			{
+				actions.remove("TURN_LEFT");
 			}
 			//System.out.println(orientation + " " + posy + " " + obstacles[posy - 1][posx - 1]);
 
 			if(orientation == 'N' && (posy == 1 || obstacles[posy - 2][posx - 1]))
 			{
+				actions.remove("GO");
 			}
 			else if(orientation == 'W' && (posx == 1 || obstacles[posy - 1][posx - 2]))
 			{
+				actions.remove("GO");
 			}
 			else if(orientation == 'E' && (posx == size.x || obstacles[posy - 1][posx]))
 			{
+				actions.remove("GO");
 			}
 			else if(orientation == 'S' && (posy == size.y || obstacles[posy][posx - 1]))
 			{
+				actions.remove("GO");
 			}
-			else
+			if(this.lastAction.equals("TURN_LEFT"))
 			{
-				stack.push("GO");
-			}
-			if(!this.lastAction.equals("TURN_LEFT"))
-			{
-				stack.push("TURN_RIGHT");
-			}
-			if(node.parent != null && node.parent.parent != null
-			&& node.parent.state.lastAction.equals(node.parent.parent.state.lastAction)
-			&& !node.parent.state.lastAction.equals("GO"))
-			{
-				stack.remove(node.parent.state.lastAction);
-			}
-	    	actions = stack;
+				actions.remove("TURN_RIGHT");
+			}			
 	    }
 		public State act(String s)
 		{
@@ -134,7 +138,6 @@ public class State
 	    }
 	    private State suck(State state)
 	    {
-	    	System.out.println("SUCC");
 	    	state.lastAction = "SUCK";
 	    	return state;
 	    }
@@ -145,7 +148,7 @@ public class State
 	    		
 	    		if(dirt)
 	    		{
-	    			System.out.print("dirt: " + dirt);
+	    			System.out.print("d");
 	    			continue;
 	    		}
 	    		else
