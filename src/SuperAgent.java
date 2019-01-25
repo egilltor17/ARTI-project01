@@ -50,7 +50,6 @@ public class SuperAgent implements Agent
 				else if (perceptName.equals("SIZE")) {
 					Matcher m = Pattern.compile("\\(\\s*SIZE\\s+([0-9]+)\\s+([0-9]+)\\s*\\)").matcher(percept);
 					if (m.matches()) {
-						System.out.println("size:");
 						this.size = new Point(Integer.parseInt(m.group(1)),Integer.parseInt(m.group(2)));
 						this.obstacles = new boolean[size.y][size.x];
 					}
@@ -87,23 +86,28 @@ public class SuperAgent implements Agent
 			}
 		}
 		this.environment.dirts = new boolean[dirtsCount];
-		System.out.println(environment.posx);
-		System.out.println(environment.posy);
-		System.out.println(environment.orientation);
-		for(int k = 0; k < 5; k++)
+
+		/*System.out.println("height: "+ size.x);
+		System.out.println("with: " + size.y);
+		System.out.println("xPos: " + environment.posx);
+		System.out.println("yPos: " + environment.posy);
+		System.out.println("Ort: " + environment.orientation);
+		for(int k = 0; k < dirtsCount; k++)
 		{
 			System.out.println(environment.dirts[k]);
-			System.out.println(dirt[k].x + " " + dirt[k].y);
-		}
+			//System.out.println(dirt[k].x + " " + dirt[k].y);
+		}*/
 		BFS bfs = new BFS(environment);
 		Node node = bfs.search(dirt, obstacles, size, home);
+		//System.out.print(node);
 		actions = new Stack<String>();
 		actions.push("TURN_OFF");
-		while(node.parent != null)
+		while(node != null)
 		{
 			actions.push(node.state.lastAction);
 			node = node.parent;
 		}
+		actions.push("TURN_ON");
     }
 
     public String nextAction(Collection<String> percepts) {
