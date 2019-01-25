@@ -141,26 +141,24 @@ public class State
 	    	return state;
 	    }
 	    public boolean goalState (State state, Point home)
-	    {
-	    	boolean bla = true;
+	    {	
+	    	boolean noDirtLeft = true;
 	    	for(boolean dirt:dirts)
 	    	{
 	    		if(dirt)
 	    		{
 	    			//System.out.print("X");
-	    			continue;
 	    		}
 	    		else
 	    		{
 	    			//System.out.print("_");
-	    			//return false;
-	    			bla = false;
+	    			noDirtLeft = false;
 	    		}
 	    	}
 	    	//System.out.println();
-	    	if(!bla)
+	    	if(!noDirtLeft)
     		{
-	    		return bla;
+	    		return noDirtLeft;
     		}
 	    	//System.out.print("Pos:  " + state.posx + " " + state.posy + "\n");
 	    	return (state.posx == home.x && state.posy == home.y);

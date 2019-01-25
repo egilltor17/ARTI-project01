@@ -38,11 +38,11 @@ public class BFS {
 			{
 				currNode = new Node(node.state.act(string), node);
 				String str = hashState(currNode.state);
-				if(visitedStates.containsKey(str))
+				/*if(visitedStates.containsKey(str))
 				{
 					//System.out.println("visited");
 					continue;
-				}
+				}*/
 				visitedStates.put(str, 0);
 				que.add(currNode);
 			}
