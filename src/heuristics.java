@@ -10,9 +10,9 @@ public class heuristics {
 	 */
 	public int[] singleManhatanHeuristic(State state, Point target)
 	{	
-		int N = target.manhatanDist(new Point(state.posx, state.posy - 1));
+		int N = target.manhatanDist(new Point(state.posx, state.posy + 1));
 		int E = target.manhatanDist(new Point(state.posx + 1, state.posy));
-		int S = target.manhatanDist(new Point(state.posx, state.posy + 1));
+		int S = target.manhatanDist(new Point(state.posx, state.posy - 1));
 		int W = target.manhatanDist(new Point(state.posx - 1, state.posy));
 		
 		if(state.orientation == 'N' ) 
@@ -56,9 +56,9 @@ public class heuristics {
 		}
 		if(noDirtsLeft)
 		{	// Gives heuristic for going home
-			int N = homePos.manhatanDist(new Point(state.posx, state.posy - 1));
+			int N = homePos.manhatanDist(new Point(state.posx, state.posy + 1));
 			int E = homePos.manhatanDist(new Point(state.posx + 1, state.posy));
-			int S = homePos.manhatanDist(new Point(state.posx, state.posy + 1));
+			int S = homePos.manhatanDist(new Point(state.posx, state.posy - 1));
 			int W = homePos.manhatanDist(new Point(state.posx - 1, state.posy));
 			if(state.orientation == 'N' ) 
 			{
