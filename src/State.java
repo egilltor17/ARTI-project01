@@ -20,13 +20,12 @@ public class State
 			this.lastAction = state.lastAction;
 		}
 		
-		public void listOfActions(Node node, Point[] dirts, boolean[][] obstacles, Point size)
+		public void listOfActions(Node node, Point[] dirtPoints, boolean[][] obstacles, Point size)
 	    {
 			actions = new Stack<String>();
-			for(int i = 0; i < dirts.length; i++)
+			for(int i = 0; i < dirtPoints.length; i++)
 			{
-				//System.out.print(dirts[i].x);
-				if(this.posx == dirts[i].x && this.posy == dirts[i].y && !this.dirts[i])
+				if(this.posx == dirtPoints[i].x && this.posy == dirtPoints[i].y && !this.dirts[i])
 				{
 					this.dirts[i] = true;
 					actions.push("SUCK");
@@ -48,10 +47,10 @@ public class State
 			{
 				actions.remove("TURN_LEFT");
 			}
-			if(!((orientation == 'N' && (posy == 1  || obstacles[posy - 2][posx - 1])) 
+			if(!((orientation == 'S' && (posy == 1  || obstacles[posy - 2][posx - 1])) 
 			  || (orientation == 'W' && (posx == 1  || obstacles[posy - 1][posx - 2]))
 			  || (orientation == 'E' && (posx == size.x || obstacles[posy - 1][posx]))
-			  || (orientation == 'S' && (posy == size.y || obstacles[posy][posx - 1]))
+			  || (orientation == 'N' && (posy == size.y || obstacles[posy][posx - 1]))
 			  )) {actions.push("GO");}
 			/*
 			if(orientation == 'N' && (posy == 1 || obstacles[posy - 2][posx - 1]))
@@ -169,7 +168,7 @@ public class State
 	    }
 	    private State go(State state)
 	    {
-	    	if(state.orientation == 'N')
+	    	if(state.orientation == 'S')
 	    	{
 	    		state.posy--;
 	    	}
@@ -177,7 +176,7 @@ public class State
 	    	{
 	    		state.posx--;
 	    	}
-	    	else if(state.orientation == 'S')
+	    	else if(state.orientation == 'N')
 	    	{
 	    		state.posy++;
 	    	}

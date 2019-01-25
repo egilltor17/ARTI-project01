@@ -17,7 +17,7 @@ public class BFS {
 		//que = new Stack<Node>();
 		que.add(root);
 	}
-	public Node search(Point[] dirts, boolean[][] obstacles, Point size, Point home)
+	public Node search(Point[] dirtPoints, boolean[][] obstacles, Point size, Point home)
 	{
 		HashMap<String, Integer> visitedStates = new HashMap<String, Integer>();
 		Node currNode;
@@ -29,11 +29,11 @@ public class BFS {
 			//	System.out.println(node.state);
 			if(node.state.goalState(node.state, home))
 			{
-				//System.out.println("Shit's done");
+				System.out.println("Shit's done");
 				return node;
 			}
 			//System.out.println("x:" + node.state.posx + " y:" + node.state.posy + " O:" + node.state.orientation);
-			node.state.listOfActions(node, dirts, obstacles, size);	// void function
+			node.state.listOfActions(node, dirtPoints, obstacles, size);	// void function
 			for(String string:node.state.actions)
 			{
 				currNode = new Node(node.state.act(string), node);

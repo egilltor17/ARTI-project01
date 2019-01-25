@@ -9,7 +9,7 @@ public class SuperAgent implements Agent
 	private State environment;
 	public Point home;
 	public Point size; // the greatest point in the field
-	public Point[] dirt;
+	public Point[] dirtPoints;
 	public boolean[][] obstacles;
 	public int dirtsCount;
 	/*
@@ -26,6 +26,7 @@ public class SuperAgent implements Agent
 			Moving north increases the y coordinate and moving east increases the x coordinate of the robots position.
 			The robot is turned off initially, so don't forget to turn it on.
 		*/
+    	dirtsCount = 0;
     	environment = new State();
 		Pattern perceptNamePattern = Pattern.compile("\\(\\s*([^\\s]+).*");
 		for (String percept:percepts) {
@@ -64,7 +65,7 @@ public class SuperAgent implements Agent
 				System.err.println("strange percept that does not match pattern: " + percept);
 			}
 		}
-		this.dirt = new Point[this.dirtsCount];
+		this.dirtPoints = new Point[this.dirtsCount];
 		int i = 0;
 		for (String percept:percepts) {
 			Matcher perceptNameMatcher = perceptNamePattern.matcher(percept);
@@ -73,7 +74,8 @@ public class SuperAgent implements Agent
 				if (perceptName.equals("AT")) {
 					Matcher m = Pattern.compile("\\(\\s*AT DIRT\\s+([0-9]+)\\s+([0-9]+)\\s*\\)").matcher(percept);
 					if (m.matches()) {
-						this.dirt[i] = new Point(Integer.parseInt(m.group(1)),Integer.parseInt(m.group(2)));
+						System.out.print(dirtPoints);
+						this.dirtPoints[i] = new Point(Integer.parseInt(m.group(1)),Integer.parseInt(m.group(2)));
 						i++;
 					}
 					m = Pattern.compile("\\(\\s*AT OBSTACLE\\s+([0-9]+)\\s+([0-9]+)\\s*\\)").matcher(percept);
@@ -98,8 +100,8 @@ public class SuperAgent implements Agent
 			//System.out.println(dirt[k].x + " " + dirt[k].y);
 		}*/
 		BFS bfs = new BFS(environment);
-		Node node = bfs.search(dirt, obstacles, size, home);
-		//System.out.print(node);
+		Node node = bfs.search(dirtPoints, obstacles, size, home);
+		System.out.println(node);
 		actions = new Stack<String>();
 		actions.push("TURN_OFF");
 		while(node != null)
@@ -107,7 +109,6 @@ public class SuperAgent implements Agent
 			actions.push(node.state.lastAction);
 			node = node.parent;
 		}
-		actions.push("TURN_ON");
     }
 
     public String nextAction(Collection<String> percepts) {
