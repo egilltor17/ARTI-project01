@@ -38,6 +38,7 @@ public class SuperAgent implements Agent
 						this.obstacles = new boolean[Integer.parseInt(m.group(2))][Integer.parseInt(m.group(1))];
 						this.environment.posx = Short.parseShort(m.group(1));
 						this.environment.posy = Short.parseShort(m.group(2));
+						this.home = new Point(Integer.parseInt(m.group(1)),Integer.parseInt(m.group(2)));
 					}
 				}
 				else if (perceptName.equals("ORIENTATION")) {
@@ -89,7 +90,6 @@ public class SuperAgent implements Agent
 		System.out.println(environment.posx);
 		System.out.println(environment.posy);
 		System.out.println(environment.orientation);
-		System.out.println(environment.on);
 		for(int k = 0; k < 5; k++)
 		{
 			System.out.println(environment.dirts[k]);
@@ -97,6 +97,7 @@ public class SuperAgent implements Agent
 		}
 		BFS bfs = new BFS(environment);
 		Node node = bfs.search(dirt, obstacles, size, home);
+		actions = new Stack<String>();
 		actions.push("TURN_OFF");
 		while(node.parent != null)
 		{
