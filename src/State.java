@@ -1,5 +1,5 @@
 import java.util.Stack;
-//import java.util.Scanner;
+import java.util.Scanner;
 
 public class State
 	{
@@ -169,8 +169,8 @@ public class State
 	    	}
 	    	System.out.print("\n");
 	    	if(!bla) return bla;
-	    	//Scanner input = new Scanner(System.in);
-	    	
+	    	Scanner input = new Scanner(System.in);
+	    	input.close();
 	    	System.out.print("Pos:  " + state.posx + " " + state.posy + "\n");
 	    	return (state.posx == home.x && state.posy == home.y);
 	    }
