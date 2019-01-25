@@ -1,6 +1,39 @@
 import java.util.Arrays;
 
 public class heuristics {
+	
+	/**
+	 * Returns an array with the weighted heuristics for turning left, going straight and turning right
+	 * @param state   -  Initial state
+	 * @param target  -  Target's location 
+	 * @return int[3] -  {LeftWeight, GoWeight, RightWeight}
+	 */
+	public int[] singleManhatanHeuristic(State state, Point target)
+	{	
+		int N = target.manhatanDist(new Point(state.posx, state.posy - 1));
+		int E = target.manhatanDist(new Point(state.posx + 1, state.posy));
+		int S = target.manhatanDist(new Point(state.posx, state.posy + 1));
+		int W = target.manhatanDist(new Point(state.posx - 1, state.posy));
+		
+		if(state.orientation == 'N' ) 
+		{
+			return new int[] {W + 1, N, E + 1};
+		} 
+		else if(state.orientation == 'E' ) 
+		{
+			return new int[] {N + 1, E, S + 1};
+		} 
+		else if(state.orientation == 'S' ) 
+		{
+			return new int[] {E + 1, S, W + 1};
+		} 
+		else 
+		{
+			return new int[] {S + 1, W, N + 1};
+		} 
+	}
+	
+	
 	/**
 	 * Returns an array with the weighted heuristics for turning left, going straight and turning right
 	 * @param state	  -  Current state
@@ -10,7 +43,7 @@ public class heuristics {
 	public int[] manhatanHeuristic(State state, Point[] dirtPos, Point homePos)
 	{	
 		int distFront[] = new int[state.dirts.length];
-		int distLeft[] = new int[state.dirts.length];
+		int distLeft[]  = new int[state.dirts.length];
 		int distRight[] = new int[state.dirts.length];
 		boolean noDirtsLeft = true;
 		for(boolean b:state.dirts)
@@ -50,9 +83,9 @@ public class heuristics {
 			{
 				if(state.dirts[i]) 
 				{
-					distFront[i] = 100000;
-					distLeft[i]  = 100000;
-					distRight[i] = 100000;
+					distFront[i] = -1;
+					distLeft[i]  = -1;
+					distRight[i] = -1;
 				} 
 				else 
 				{
@@ -89,7 +122,8 @@ public class heuristics {
 			Arrays.sort(distFront);
 			Arrays.sort(distLeft);
 			Arrays.sort(distRight);
-			return new int[] {distLeft[distLeft.length - 1], distFront[distFront.length - 1], distRight[distRight.length - 1]};
+			return new int[] {distLeft[distLeft.length - 1], distFront[distFront.length - 1], distRight[distRight.length - 1]};  // Is not admissible for multiple objectives.
+			//return new int[] {distLeft[0], distFront[0], distRight[0]};  // Is not complete for multiple objectives. 
 		}
 	}
 	
