@@ -3,8 +3,7 @@ public class Node{
 		public Node parent;
 		public Node[] children;
 		public State state;
-		public String[] availableActions;
-		public Node(State state, String[] s)
+		public Node(State state)
 		{
 			this.state = state;
 			this.parent = null;

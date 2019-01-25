@@ -1,4 +1,5 @@
 import java.util.Stack;
+//import java.util.Scanner;
 
 public class State
 	{
@@ -34,23 +35,34 @@ public class State
 				}
 			}
 			actions.push("TURN_LEFT");
-			actions.push("GO");
+			//actions.push("GO");
 			actions.push("TURN_RIGHT");
 			//prevents going in circles
 			if(node.parent != null && node.parent.parent != null
-			&& node.parent.state.lastAction.equals(node.parent.parent.state.lastAction)
-			&& !node.parent.state.lastAction.equals("GO"))
+			  && node.parent.state.lastAction.equals(node.parent.parent.state.lastAction)
+			  && !node.parent.state.lastAction.equals("GO"))
 			{
 				actions.remove("TURN_LEFT");
 				actions.remove("TURN_RIGHT");
 
 			}
+			//System.out.println(orientation + " " + posy + " " + obstacles[posy - 1][posx - 1]);
+
+			if(this.lastAction.equals("TURN_LEFT"))
+			{
+				actions.remove("TURN_RIGHT");
+			}
+			
 			if(this.lastAction.equals("TURN_RIGHT") )
 			{
 				actions.remove("TURN_LEFT");
 			}
-			//System.out.println(orientation + " " + posy + " " + obstacles[posy - 1][posx - 1]);
-
+			if(!((orientation == 'N' && (posy == 1  || obstacles[posy - 2][posx - 1])) 
+			  || (orientation == 'W' && (posx == 1  || obstacles[posy - 1][posx - 2]))
+			  || (orientation == 'E' && (posx == size.x || obstacles[posy - 1][posx]))
+			  || (orientation == 'S' && (posy == size.y || obstacles[posy][posx - 1]))
+			  )) {actions.push("GO");}
+			/*
 			if(orientation == 'N' && (posy == 1 || obstacles[posy - 2][posx - 1]))
 			{
 				actions.remove("GO");
@@ -67,10 +79,7 @@ public class State
 			{
 				actions.remove("GO");
 			}
-			if(this.lastAction.equals("TURN_LEFT"))
-			{
-				actions.remove("TURN_RIGHT");
-			}			
+			*/						
 	    }
 		public State act(String s)
 		{
@@ -143,21 +152,26 @@ public class State
 	    }
 	    public boolean goalState (State state, Point home)
 	    {
+	    	boolean bla = true;
 	    	for(boolean dirt:dirts)
 	    	{
-	    		
 	    		if(dirt)
 	    		{
-	    			System.out.print("d");
+	    			System.out.print("X");
 	    			continue;
 	    		}
 	    		else
 	    		{
-	    			System.out.print("   ");
-	    			return false;
+	    			System.out.print("_");
+	    			//return false;
+	    			bla = false;
 	    		}
 	    	}
-	    	System.out.print(" " + state.posx + " " + state.posy + "\n");
+	    	System.out.print("\n");
+	    	if(!bla) return bla;
+	    	//Scanner input = new Scanner(System.in);
+	    	
+	    	System.out.print("Pos:  " + state.posx + " " + state.posy + "\n");
 	    	return (state.posx == home.x && state.posy == home.y);
 	    }
 	    private State go(State state)
@@ -180,5 +194,9 @@ public class State
 	    	}
 	    	state.lastAction = "GO";
 	    	return state;
+	    }
+	    public String toString() 
+	    {
+	    	return "State is ok.";
 	    }
 	}

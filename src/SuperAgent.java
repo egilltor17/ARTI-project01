@@ -38,6 +38,7 @@ public class SuperAgent implements Agent
 						this.obstacles = new boolean[Integer.parseInt(m.group(2))][Integer.parseInt(m.group(1))];
 						this.environment.posx = Short.parseShort(m.group(1));
 						this.environment.posy = Short.parseShort(m.group(2));
+						home = new Point(Integer.parseInt(m.group(1)),Integer.parseInt(m.group(2)));
 					}
 				}
 				else if (perceptName.equals("ORIENTATION")) {
@@ -49,7 +50,6 @@ public class SuperAgent implements Agent
 				else if (perceptName.equals("SIZE")) {
 					Matcher m = Pattern.compile("\\(\\s*SIZE\\s+([0-9]+)\\s+([0-9]+)\\s*\\)").matcher(percept);
 					if (m.matches()) {
-						System.out.println("size:");
 						this.size = new Point(Integer.parseInt(m.group(1)),Integer.parseInt(m.group(2)));
 						this.obstacles = new boolean[size.y][size.x];
 					}
@@ -86,11 +86,13 @@ public class SuperAgent implements Agent
 			}
 		}
 		this.environment.dirts = new boolean[dirtsCount];
-		System.out.println(environment.posx);
-		System.out.println(environment.posy);
-		System.out.println(environment.orientation);
-		System.out.println(environment.on);
-		for(int k = 0; k < 5; k++)
+		System.out.println("height: "+ size.x);
+		System.out.println("with: " + size.y);
+		System.out.println("xPos: " + environment.posx);
+		System.out.println("yPos: " + environment.posy);
+		System.out.println("Ort: " + environment.orientation);
+		System.out.println("isON: " + environment.on);
+		for(int k = 0; k < dirtsCount; k++)
 		{
 			System.out.println(environment.dirts[k]);
 			System.out.println(dirt[k].x + " " + dirt[k].y);
