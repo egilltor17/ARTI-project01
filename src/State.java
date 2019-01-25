@@ -1,13 +1,11 @@
 import java.util.Stack;
-import java.util.Scanner;
 
-public class State
+public class State 
 	{
 		boolean[] dirts;
 		short posx;
 		short posy;
 		char orientation;
-		boolean on;
 		String lastAction;
 		Stack<String> actions;
 		
@@ -18,9 +16,9 @@ public class State
 			this.posx = state.posx;
 			this.posy = state.posy;
 			this.orientation = state.orientation;
-			this.on = state.on;
 			this.lastAction = state.lastAction;
 		}
+		
 		public void listOfActions(Node node, Point[] dirts, boolean[][] obstacles, Point size)
 	    {
 			actions = new Stack<String>();
@@ -38,21 +36,13 @@ public class State
 			//actions.push("GO");
 			actions.push("TURN_RIGHT");
 			//prevents going in circles
-			if(node.parent != null && node.parent.parent != null
-			  && node.parent.state.lastAction.equals(node.parent.parent.state.lastAction)
-			  && !node.parent.state.lastAction.equals("GO"))
-			{
-				actions.remove("TURN_LEFT");
-				actions.remove("TURN_RIGHT");
 
-			}
 			//System.out.println(orientation + " " + posy + " " + obstacles[posy - 1][posx - 1]);
 
 			if(this.lastAction.equals("TURN_LEFT"))
 			{
 				actions.remove("TURN_RIGHT");
 			}
-			
 			if(this.lastAction.equals("TURN_RIGHT") )
 			{
 				actions.remove("TURN_LEFT");
@@ -157,21 +147,22 @@ public class State
 	    	{
 	    		if(dirt)
 	    		{
-	    			System.out.print("X");
+	    			//System.out.print("X");
 	    			continue;
 	    		}
 	    		else
 	    		{
-	    			System.out.print("_");
+	    			//System.out.print("_");
 	    			//return false;
 	    			bla = false;
 	    		}
 	    	}
-	    	System.out.print("\n");
-	    	if(!bla) return bla;
-	    	Scanner input = new Scanner(System.in);
-	    	input.close();
-	    	System.out.print("Pos:  " + state.posx + " " + state.posy + "\n");
+	    	//System.out.println();
+	    	if(!bla)
+    		{
+	    		return bla;
+    		}
+	    	//System.out.print("Pos:  " + state.posx + " " + state.posy + "\n");
 	    	return (state.posx == home.x && state.posy == home.y);
 	    }
 	    private State go(State state)
