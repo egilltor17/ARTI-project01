@@ -1,38 +1,31 @@
 import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Queue;
+import java.util.Stack;
 //import java.util.Stack;
 
-public class BFS {
+public class BlindSearch {
 	
 	Node root;
-	Queue<Node> que;
 	//Stack<Node> que;
-	public BFS(State state)
+	public BlindSearch(State state)
 	{
-		state.lastAction = "TURN_ON";
 		root = new Node(state);
-		//root = new Node(state, new String[] {"TURN_ON"});
-		que = new ArrayDeque<Node>();
-		//que = new Stack<Node>();
-		que.add(root);
 	}
-	public Node search(Point[] dirtPoints, boolean[][] obstacles, Point size, Point home)
+	public Node BFS(Point[] dirtPoints, boolean[][] obstacles, Point size, Point home)
 	{
+		Queue<Node> que = new ArrayDeque<Node>();
+		que.add(root);
 		HashMap<String, Integer> visitedStates = new HashMap<String, Integer>();
 		Node currNode;
 		while(!que.isEmpty())
 		{
 			Node node = que.remove();
-			//Node node = que.pop();
-			//if(node.state != null)
-			//	System.out.println(node.state);
 			if(node.state.goalState(node.state, home))
 			{
 				System.out.println("Shit's done");
 				return node;
 			}
-			//System.out.println("x:" + node.state.posx + " y:" + node.state.posy + " O:" + node.state.orientation);
 			node.state.listOfActions(node, dirtPoints, obstacles, size);	// void function
 			for(String string:node.state.actions)
 			{
@@ -40,11 +33,39 @@ public class BFS {
 				String str = hashState(currNode.state);
 				if(visitedStates.containsKey(str))
 				{
-					//System.out.println("visited");
 					continue;
 				}
 				visitedStates.put(str, 0);
 				que.add(currNode);
+			}
+		}
+		return null;
+	}
+	public Node DFS(Point[] dirtPoints, boolean[][] obstacles, Point size, Point home)
+	{
+		Stack<Node> stack = new Stack<Node>();
+		stack.push(root);
+		HashMap<String, Integer> visitedStates = new HashMap<String, Integer>();
+		Node currNode;
+		while(!stack.isEmpty())
+		{
+			Node node = stack.pop();
+			if(node.state.goalState(node.state, home))
+			{
+				System.out.println("Shit's done");
+				return node;
+			}
+			node.state.listOfActions(node, dirtPoints, obstacles, size);	// void function
+			for(String string:node.state.actions)
+			{
+				currNode = new Node(node.state.act(string), node);
+				String str = hashState(currNode.state);
+				if(visitedStates.containsKey(str))
+				{
+					continue;
+				}
+				visitedStates.put(str, 0);
+				stack.push(currNode);
 			}
 		}
 		return null;

@@ -33,12 +33,15 @@ public class State
 				}
 			}
 			actions.push("TURN_LEFT");
-			//actions.push("GO");
+			if(!((orientation == 'S' && (posy == 1  || obstacles[posy - 2][posx - 1])) 
+			  || (orientation == 'W' && (posx == 1  || obstacles[posy - 1][posx - 2]))
+			  || (orientation == 'E' && (posx == size.x || obstacles[posy - 1][posx]))
+			  || (orientation == 'N' && (posy == size.y || obstacles[posy][posx - 1])))) 
+			{
+				actions.push("GO");
+			}
 			actions.push("TURN_RIGHT");
-			//prevents going in circles
-
-			//System.out.println(orientation + " " + posy + " " + obstacles[posy - 1][posx - 1]);
-
+			
 			if(this.lastAction.equals("TURN_LEFT"))
 			{
 				actions.remove("TURN_RIGHT");
@@ -47,11 +50,7 @@ public class State
 			{
 				actions.remove("TURN_LEFT");
 			}
-			if(!((orientation == 'S' && (posy == 1  || obstacles[posy - 2][posx - 1])) 
-			  || (orientation == 'W' && (posx == 1  || obstacles[posy - 1][posx - 2]))
-			  || (orientation == 'E' && (posx == size.x || obstacles[posy - 1][posx]))
-			  || (orientation == 'N' && (posy == size.y || obstacles[posy][posx - 1]))
-			  )) {actions.push("GO");}
+			
 			/*
 			if(orientation == 'N' && (posy == 1 || obstacles[posy - 2][posx - 1]))
 			{

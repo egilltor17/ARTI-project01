@@ -88,7 +88,7 @@ public class SuperAgent implements Agent
 			}
 		}
 		this.environment.dirts = new boolean[dirtsCount];
-
+		this.environment.lastAction = "TURN_ON";
 		/*System.out.println("height: "+ size.x);
 		System.out.println("with: " + size.y);
 		System.out.println("xPos: " + environment.posx);
@@ -99,11 +99,10 @@ public class SuperAgent implements Agent
 			System.out.println(environment.dirts[k]);
 			//System.out.println(dirt[k].x + " " + dirt[k].y);
 		}*/
-		BFS bfs = new BFS(environment);
-		Node node = bfs.search(dirtPoints, obstacles, size, home);
-		System.out.println(node);
+		BlindSearch search = new BlindSearch(environment);
+		Node node = search.DFS(dirtPoints, obstacles, size, home);
+		System.out.println("node: " + node);
 		actions = new Stack<String>();
-		actions.push("TURN_OFF");
 		while(node != null)
 		{
 			actions.push(node.state.lastAction);
@@ -112,6 +111,11 @@ public class SuperAgent implements Agent
     }
 
     public String nextAction(Collection<String> percepts) {
+    	if(actions == null || actions.isEmpty())
+    	{
+    		System.out.print("Stack is empty");
+    		return "TURN_OFF";
+    	}
     	return actions.pop();
 	}
 }
