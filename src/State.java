@@ -138,7 +138,15 @@ public class State
 	    	state.lastAction = "SUCK";
 	    	return state;
 	    }
-	    public boolean goalState (State state, Point home)
+	    public boolean dirtGoalState(State state, Point target)
+	    {
+	    	if(state.posx == target.x && state.posy == target.y)
+	    	{
+	    		return true;
+	    	}
+	    	return false;
+	    }
+	    public boolean searchGoalState (State state, Point home)
 	    {	
 	    	//boolean noDirtLeft = true;
 	    	for(boolean dirt:dirts)
