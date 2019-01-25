@@ -142,7 +142,7 @@ public class State
 	    }
 	    public boolean goalState (State state, Point home)
 	    {	
-	    	boolean noDirtLeft = true;
+	    	//boolean noDirtLeft = true;
 	    	for(boolean dirt:dirts)
 	    	{
 	    		if(dirt)
@@ -152,15 +152,18 @@ public class State
 	    		else
 	    		{
 	    			//System.out.print("_");
-	    			noDirtLeft = false;
+	    			//noDirtLeft = false;
+	    			return false;
 	    		}
 	    	}
-	    	//System.out.println();
+	    	/*
+	    	System.out.println();
 	    	if(!noDirtLeft)
     		{
 	    		return noDirtLeft;
     		}
-	    	//System.out.print("Pos:  " + state.posx + " " + state.posy + "\n");
+	    	System.out.print("Pos:  " + state.posx + " " + state.posy + "\n");
+	    	*/
 	    	return (state.posx == home.x && state.posy == home.y);
 	    }
 	    private State go(State state)
