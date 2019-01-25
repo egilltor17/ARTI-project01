@@ -8,6 +8,7 @@ public class State
 		char orientation;
 		String lastAction;
 		Stack<String> actions;
+		int pathCost;
 		
 		public State(){}
 		public State(State state)
@@ -17,6 +18,7 @@ public class State
 			this.posy = state.posy;
 			this.orientation = state.orientation;
 			this.lastAction = state.lastAction;
+			this.pathCost = state.pathCost + 1;
 		}
 		
 		public void listOfActions(Node node, Point[] dirtPoints, boolean[][] obstacles, Point size)

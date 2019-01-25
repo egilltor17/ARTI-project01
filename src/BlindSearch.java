@@ -1,5 +1,7 @@
 import java.util.ArrayDeque;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Stack;
 //import java.util.Stack;
@@ -7,8 +9,10 @@ import java.util.Stack;
 public class BlindSearch {
 	
 	Node root;
+	int sizeOfFrontier;
 	public BlindSearch(State state)
 	{
+		sizeOfFrontier = 0;
 		root = new Node(state);
 	}
 	public Node[] reachableDirt(Point[] dirtPoints, boolean[][] obstacles, Point size, Point home)
@@ -66,7 +70,7 @@ public class BlindSearch {
 			Node node = que.remove();
 			if(node.state.searchGoalState(node.state, home))
 			{
-				System.out.println("Shit's done");
+				System.out.println("Shit's done  " + sizeOfFrontier);
 				return node;
 			}
 			node.state.listOfActions(node, dirtPoints, obstacles, size);	// void function
@@ -80,6 +84,65 @@ public class BlindSearch {
 				}
 				visitedStates.put(str, 0);
 				que.add(currNode);
+				if(sizeOfFrontier < que.size())
+				{
+					sizeOfFrontier = que.size();
+				}
+			}
+		}
+		return null;
+	}
+	public Node UCS(Point[] dirtPoints, boolean[][] obstacles, Point size, Point home)
+	{
+		Node[] dirt = reachableDirt(dirtPoints, obstacles, size, home);
+		for(int i = 0; i < dirt.length; i++)
+		{
+			if(dirt[i] == null)
+			{
+				System.out.println("dirt is unreachable" + dirtPoints[i].x + " " + dirtPoints[i].y);
+				//this dirt is unreachable dont make the bot get it
+				root.state.dirts[i] = true;
+			}
+		}
+		PriorityQueue<Node> pq = new PriorityQueue<Node>( new Comparator<Node>() {
+		    public int compare(Node n1, Node n2) {
+		        if(n1.state.pathCost < n2.state.pathCost)
+		        {
+		        	return -1;
+		        }
+		        if(n1.state.pathCost == n2.state.pathCost)
+		        {
+		        	return 0;
+		        }
+		        return 1;
+		    }
+		});
+		pq.add(root);
+		HashMap<String, Integer> visitedStates = new HashMap<String, Integer>();
+		Node currNode;
+		while(!pq.isEmpty())
+		{
+			Node node = pq.poll();
+			if(node.state.searchGoalState(node.state, home))
+			{
+				System.out.println("Shit's done  " + sizeOfFrontier);
+				return node;
+			}
+			node.state.listOfActions(node, dirtPoints, obstacles, size);	// void function
+			for(String string:node.state.actions)
+			{
+				currNode = new Node(node.state.act(string), node);
+				String str = hashState(currNode.state);
+				if(visitedStates.containsKey(str))
+				{
+					continue;
+				}
+				visitedStates.put(str, 0);
+				pq.add(currNode);
+				if(sizeOfFrontier < pq.size())
+				{
+					sizeOfFrontier = pq.size();
+				}
 			}
 		}
 		return null;
@@ -105,7 +168,7 @@ public class BlindSearch {
 			Node node = stack.pop();
 			if(node.state.searchGoalState(node.state, home))
 			{
-				System.out.println("Shit's done");
+				System.out.println("Shit's done  " + sizeOfFrontier);
 				return node;
 			}
 			node.state.listOfActions(node, dirtPoints, obstacles, size);	// void function
@@ -119,6 +182,10 @@ public class BlindSearch {
 				}
 				visitedStates.put(str, 0);
 				stack.push(currNode);
+				if(sizeOfFrontier < stack.size())
+				{
+					sizeOfFrontier = stack.size();
+				}
 			}
 		}
 		return null;

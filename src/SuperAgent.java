@@ -89,6 +89,7 @@ public class SuperAgent implements Agent
 		}
 		this.environment.dirts = new boolean[dirtsCount];
 		this.environment.lastAction = "TURN_ON";
+		this.environment.pathCost = 0;
 		/*System.out.println("height: "+ size.x);
 		System.out.println("with: " + size.y);
 		System.out.println("xPos: " + environment.posx);
