@@ -12,6 +12,10 @@ public class SuperAgent implements Agent
 	public Point[] dirtPoints;
 	public boolean[][] obstacles;
 	public int dirtsCount;
+	public char[][] field;
+	Stack<Point> locations;
+	Stack<Character> orientation;
+	Point lastField;
 	/*
 		init(Collection<String> percepts) is called once before you have to select the first action. Use it to find a plan. Store the plan and just execute it step by step in nextAction.
 	*/
@@ -53,6 +57,8 @@ public class SuperAgent implements Agent
 					if (m.matches()) {
 						this.size = new Point(Integer.parseInt(m.group(1)),Integer.parseInt(m.group(2)));
 						this.obstacles = new boolean[size.y][size.x];
+						this.field = new char[size.y][size.x];
+						lastField = new Point(home.x, home.y);
 					}
 				}
 				else if (perceptName.equals("AT")) {
@@ -76,17 +82,22 @@ public class SuperAgent implements Agent
 					if (m.matches()) {
 						System.out.print(dirtPoints);
 						this.dirtPoints[i] = new Point(Integer.parseInt(m.group(1)),Integer.parseInt(m.group(2)));
+						field[dirtPoints[i].y - 1][dirtPoints[i].x - 1] = 'D';
 						i++;
 					}
 					m = Pattern.compile("\\(\\s*AT OBSTACLE\\s+([0-9]+)\\s+([0-9]+)\\s*\\)").matcher(percept);
 					if (m.matches()) {
 						this.obstacles[Integer.parseInt(m.group(2)) - 1][Integer.parseInt(m.group(1)) - 1] = true;
+						field[Integer.parseInt(m.group(2)) - 1][Integer.parseInt(m.group(1)) - 1] = 'X';
 					}
 				}
 			} else {
 				System.err.println("strange percept that does not match pattern: " + percept);
 			}
 		}
+		field[home.y - 1][home.x - 1] = environment.orientation;
+		System.out.println();
+		printField();
 		this.environment.dirts = new boolean[dirtsCount];
 		this.environment.lastAction = "TURN_ON";
 		this.environment.pathCost = 0;
@@ -100,25 +111,46 @@ public class SuperAgent implements Agent
 			System.out.println(environment.dirts[k]);
 			//System.out.println(dirt[k].x + " " + dirt[k].y);
 		}*/
-		/*BlindSearch search = new BlindSearch(environment);
-		Node node = search.BFS(dirtPoints, obstacles, size, home);*/
-		HeuristicSearch search = new HeuristicSearch(environment);
-		Node node = search.AstarSearch(dirtPoints, obstacles, size, home);
+		BlindSearch search = new BlindSearch(environment);
+		Node node = search.BFS(dirtPoints, obstacles, size, home);
+		/*HeuristicSearch search = new HeuristicSearch(environment);
+		Node node = search.AstarSearch(dirtPoints, obstacles, size, home);*/
 		System.out.println("node: " + node);
 		actions = new Stack<String>();
+		orientation = new Stack<Character>();
+		locations = new Stack<Point>();
 		while(node != null)
 		{
 			actions.push(node.state.lastAction);
+			orientation.push(node.state.orientation);
+			locations.push(new Point(node.state.posx, node.state.posy));
 			node = node.parent;
 		}
     }
-
+    private void printField()
+    {
+		System.out.println();
+    	for(int y = size.y - 1; 0 <= y; y--)
+		{
+			for(int k = 0; k < size.x; k++)
+			{
+				System.out.print(field[y][k]);
+			}
+			System.out.println();
+		}
+		System.out.println();
+    }
     public String nextAction(Collection<String> percepts) {
     	if(actions == null || actions.isEmpty())
     	{
     		System.out.print("Stack is empty");
     		return "TURN_OFF";
     	}
+    	Point location = locations.pop();
+    	field[lastField.y - 1][lastField.x - 1] = ' ';
+    	field[location.y - 1][location.x - 1] = orientation.pop();
+    	lastField = location;
+    	printField();
     	return actions.pop();
 	}
 }

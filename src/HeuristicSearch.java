@@ -162,7 +162,7 @@ public class HeuristicSearch {
 			System.out.println("Shit's done  " + sizeOfFrontier);
 			return node;
 		}
-		int closestDist = Integer.MAX_VALUE;
+		int closestDist = 1;
 		Point closestDirt = null;
 		for(int i = 0; i < dirtPoints.length; i++)
 		{
