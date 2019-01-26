@@ -1,7 +1,17 @@
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.PriorityQueue;
 
-public class heuristics {
-	
+public class HeuristicSearch {
+
+	Node root;
+	int sizeOfFrontier;
+	HashMap<String, Integer> visitedStates;
+	public HeuristicSearch(State state)
+	{
+		root = new Node(state);
+	}
 	/**
 	 * Returns an array with the weighted heuristics for turning left, going straight and turning right
 	 * @param state   -  Initial state
@@ -126,6 +136,82 @@ public class heuristics {
 			//return new int[] {distLeft[0], distFront[0], distRight[0]};  // Is not complete for multiple objectives. 
 		}
 	}
+	public Node AstarSearch(Point[] dirtPoints, boolean[][] obstacles, Point size, Point home)
+	{
+		PriorityQueue<Node> pq = new PriorityQueue<Node>( new Comparator<Node>() {
+		public int compare(Node n1, Node n2) {
+	        if(n1.state.pathCost + n1.state.heuristicCost < n2.state.pathCost + n2.state.heuristicCost)
+	        {
+	        	return -1;
+	        }
+	        if(n1.state.pathCost + n1.state.heuristicCost == n2.state.pathCost + n2.state.heuristicCost)
+	        {
+	        	return 0;
+	        }
+	        return 1;
+	    }
+	});
+	pq.add(root);
+	visitedStates = new HashMap<String, Integer>();
+	Node currNode;
+	while(!pq.isEmpty())
+	{
+		Node node = pq.poll();
+		if(node.state.searchGoalState(node.state, home))
+		{
+			System.out.println("Shit's done  " + sizeOfFrontier);
+			return node;
+		}
+		int closestDist = Integer.MAX_VALUE;
+		Point closestDirt = null;
+		for(int i = 0; i < dirtPoints.length; i++)
+		{
+			if(!node.state.dirts[i])
+			{
+				int dist = dirtPoints[i].manhatanDist(new Point(node.state.posx, node.state.posy));
+				if(dist > closestDist)
+				{
+					closestDist = dist;
+					closestDirt = dirtPoints[i];
+				}
+			}
+		}
+		if(closestDirt == null)
+		{
+			closestDirt = home;
+		}
+		int[] moves = singleManhatanHeuristic(node.state, closestDirt);
+		//int[] moves = manhatanHeuristic(node.state, dirtPoints, home);
+		node.state.listOfActions(node, dirtPoints, obstacles, size);	// void function
+		int i = -1;
+		for(String string:node.state.actions)
+		{
+			i++;
+			if(string.equals(""))
+			{
+				continue;
+			}
+			currNode = new Node(node.state.act(string), node);
+			currNode.state.heuristicCost = moves[i];
+			String str = hashState(currNode.state);
+			if(visitedStates.containsKey(str))
+			{
+				continue;
+			}
+			visitedStates.put(str, currNode.state.pathCost + currNode.state.heuristicCost);
+			pq.add(currNode);
+			if(sizeOfFrontier < pq.size())
+			{
+				sizeOfFrontier = pq.size();
+			}
+			if(string == "SUCK")
+			{
+				break;
+			}
+		}
+	}
+	return null;
+	}
 	
 	public int dirtRemainingHeuristics(State state) 
 	{
@@ -135,6 +221,23 @@ public class heuristics {
 			if(!b) dirtCount++;
 		}
 		return dirtCount;
+	}
+	public String hashState(State state)
+	{
+		String str = "";
+		for(boolean dirt:state.dirts)
+		{
+			if(dirt)
+			{
+				str += "1";
+			}
+			else
+			{
+				str += "0";
+			}
+		}
+		str += state.posx + "" + state.posy + "" + (int)state.orientation;
+		return str;
 	}
 	
 	public static void main(String[] args) 

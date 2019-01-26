@@ -10,10 +10,21 @@ public class BlindSearch {
 	
 	Node root;
 	int sizeOfFrontier;
+	HashMap<String, Integer> visitedStates;
 	public BlindSearch(State state)
 	{
 		sizeOfFrontier = 0;
 		root = new Node(state);
+	}
+	private boolean checkVisited(Node currNode)
+	{
+		String str = hashState(currNode.state);
+		if(visitedStates.containsKey(str))
+		{
+			return true;
+		}
+		visitedStates.put(str, 0);
+		return false;
 	}
 	public Node[] reachableDirt(Point[] dirtPoints, boolean[][] obstacles, Point size, Point home)
 	{
@@ -23,7 +34,7 @@ public class BlindSearch {
 			reachableDirt[i] = null;
 			Queue<Node> que = new ArrayDeque<Node>();
 			que.add(root);
-			HashMap<String, Integer> visitedStates = new HashMap<String, Integer>();
+			visitedStates = new HashMap<String, Integer>();
 			Node currNode;
 			while(!que.isEmpty())
 			{
@@ -36,6 +47,10 @@ public class BlindSearch {
 				node.state.listOfActions(node, dirtPoints, obstacles, size);	// void function
 				for(String string:node.state.actions)
 				{
+					if(string.equals(""))
+					{
+						continue;
+					}
 					currNode = new Node(node.state.act(string), node);
 					String str = hashState(currNode.state);
 					if(visitedStates.containsKey(str))
@@ -44,6 +59,10 @@ public class BlindSearch {
 					}
 					visitedStates.put(str, 0);
 					que.add(currNode);
+					if(string == "SUCK")
+					{
+						break;
+					}
 				}
 			}
 		}
@@ -63,7 +82,7 @@ public class BlindSearch {
 		}
 		Queue<Node> que = new ArrayDeque<Node>();
 		que.add(root);
-		HashMap<String, Integer> visitedStates = new HashMap<String, Integer>();
+		visitedStates = new HashMap<String, Integer>();
 		Node currNode;
 		while(!que.isEmpty())
 		{
@@ -76,6 +95,10 @@ public class BlindSearch {
 			node.state.listOfActions(node, dirtPoints, obstacles, size);	// void function
 			for(String string:node.state.actions)
 			{
+				if(string.equals(""))
+				{
+					continue;
+				}
 				currNode = new Node(node.state.act(string), node);
 				String str = hashState(currNode.state);
 				if(visitedStates.containsKey(str))
@@ -87,6 +110,10 @@ public class BlindSearch {
 				if(sizeOfFrontier < que.size())
 				{
 					sizeOfFrontier = que.size();
+				}
+				if(string == "SUCK")
+				{
+					break;
 				}
 			}
 		}
@@ -118,7 +145,7 @@ public class BlindSearch {
 		    }
 		});
 		pq.add(root);
-		HashMap<String, Integer> visitedStates = new HashMap<String, Integer>();
+		visitedStates = new HashMap<String, Integer>();
 		Node currNode;
 		while(!pq.isEmpty())
 		{
@@ -131,6 +158,10 @@ public class BlindSearch {
 			node.state.listOfActions(node, dirtPoints, obstacles, size);	// void function
 			for(String string:node.state.actions)
 			{
+				if(string.equals(""))
+				{
+					continue;
+				}
 				currNode = new Node(node.state.act(string), node);
 				String str = hashState(currNode.state);
 				if(visitedStates.containsKey(str))
@@ -142,6 +173,10 @@ public class BlindSearch {
 				if(sizeOfFrontier < pq.size())
 				{
 					sizeOfFrontier = pq.size();
+				}
+				if(string == "SUCK")
+				{
+					break;
 				}
 			}
 		}
@@ -161,7 +196,7 @@ public class BlindSearch {
 		}
 		Stack<Node> stack = new Stack<Node>();
 		stack.push(root);
-		HashMap<String, Integer> visitedStates = new HashMap<String, Integer>();
+		visitedStates = new HashMap<String, Integer>();
 		Node currNode;
 		while(!stack.isEmpty())
 		{
@@ -174,6 +209,10 @@ public class BlindSearch {
 			node.state.listOfActions(node, dirtPoints, obstacles, size);	// void function
 			for(String string:node.state.actions)
 			{
+				if(string.equals(""))
+				{
+					continue;
+				}
 				currNode = new Node(node.state.act(string), node);
 				String str = hashState(currNode.state);
 				if(visitedStates.containsKey(str))
@@ -181,10 +220,14 @@ public class BlindSearch {
 					continue;
 				}
 				visitedStates.put(str, 0);
-				stack.push(currNode);
+				stack.add(currNode);
 				if(sizeOfFrontier < stack.size())
 				{
 					sizeOfFrontier = stack.size();
+				}
+				if(string == "SUCK")
+				{
+					break;
 				}
 			}
 		}

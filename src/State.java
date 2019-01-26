@@ -1,4 +1,3 @@
-import java.util.Stack;
 
 public class State 
 	{
@@ -7,8 +6,9 @@ public class State
 		short posy;
 		char orientation;
 		String lastAction;
-		Stack<String> actions;
+		String[] actions;
 		int pathCost;
+		int heuristicCost;
 		
 		public State(){}
 		public State(State state)
@@ -23,34 +23,33 @@ public class State
 		
 		public void listOfActions(Node node, Point[] dirtPoints, boolean[][] obstacles, Point size)
 	    {
-			actions = new Stack<String>();
+			actions = new String[] {"TURN_LEFT", "", "TURN_RIGHT"};
 			for(int i = 0; i < dirtPoints.length; i++)
 			{
 				if(this.posx == dirtPoints[i].x && this.posy == dirtPoints[i].y && !this.dirts[i])
 				{
 					this.dirts[i] = true;
-					actions.push("SUCK");
+					actions[0] = "SUCK";
+					actions[2] = "";
 					return;
 				}
 			}
-			actions.push("TURN_LEFT");
 			if(!((orientation == 'S' && (posy == 1  || obstacles[posy - 2][posx - 1])) 
 			  || (orientation == 'W' && (posx == 1  || obstacles[posy - 1][posx - 2]))
 			  || (orientation == 'E' && (posx == size.x || obstacles[posy - 1][posx]))
 			  || (orientation == 'N' && (posy == size.y || obstacles[posy][posx - 1])))) 
 			{
-				actions.push("GO");
+				actions[1] = "GO";
 			}
-			actions.push("TURN_RIGHT");
 			
-			if(this.lastAction.equals("TURN_LEFT"))
+			/*if(this.lastAction.equals("TURN_LEFT"))
 			{
 				actions.remove("TURN_RIGHT");
 			}
 			if(this.lastAction.equals("TURN_RIGHT") )
 			{
 				actions.remove("TURN_LEFT");
-			}
+			}*/
 			
 			/*
 			if(orientation == 'N' && (posy == 1 || obstacles[posy - 2][posx - 1]))
