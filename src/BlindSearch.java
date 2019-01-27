@@ -17,6 +17,7 @@ public class BlindSearch {
 		sizeOfFrontier = 0;
 		root = new Node(state);
 	}
+	@SuppressWarnings("unused")
 	private boolean checkVisited(Node currNode)
 	{
 		//String str = hashState(currNode.state);
@@ -262,16 +263,14 @@ public class BlindSearch {
 	}*/
 	public int hashState(State state)
 	{
-		// 0000 0000 0000 0000  XXXX XXXY YYYY YYOO
+		// Hash is now an integer with one bit for each dirt (max 16 dirt),
+		// 7 bits for x & y coordinates (max 128 x 128 board) and 2 bits for orientation
+		// hash = DDDD DDDD DDDD DDDD  XXXX XXXY YYYY YYOO
 		int hash = 0;
 		for(int i = 0; i < state.dirts.length; i++)
 		{
-			if(state.dirts[i])
-			{
-				hash += (int) Math.pow(2, i);
-			}
+			if(state.dirts[i]) hash += 1 << (31 - i);
 		}
-		hash = hash << 16;
 		hash += state.posx << 9;
 		hash += state.posy << 2;
 		if(state.orientation == 'N') hash += 0;
