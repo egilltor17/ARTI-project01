@@ -23,14 +23,13 @@ public class State
 		
 		public void listOfActions(Node node, Point[] dirtPoints, boolean[][] obstacles, Point size)
 	    {
-			actions = new String[] {"TURN_LEFT", "", "TURN_RIGHT"};
+			actions = new String[] {"", "TURN_LEFT", "TURN_RIGHT"};
 			for(int i = 0; i < dirtPoints.length; i++)
 			{
 				if(this.posx == dirtPoints[i].x && this.posy == dirtPoints[i].y && !this.dirts[i])
 				{
 					this.dirts[i] = true;
 					actions[0] = "SUCK";
-					actions[2] = "";
 					return;
 				}
 			}
@@ -39,17 +38,8 @@ public class State
 			  || (orientation == 'E' && (posx == size.x || obstacles[posy - 1][posx]))
 			  || (orientation == 'N' && (posy == size.y || obstacles[posy][posx - 1])))) 
 			{
-				actions[1] = "GO";
+				actions[0] = "GO";
 			}
-			
-			/*if(this.lastAction.equals("TURN_LEFT"))
-			{
-				actions.remove("TURN_RIGHT");
-			}
-			if(this.lastAction.equals("TURN_RIGHT") )
-			{
-				actions.remove("TURN_LEFT");
-			}*/
 			
 			/*
 			if(orientation == 'N' && (posy == 1 || obstacles[posy - 2][posx - 1]))
