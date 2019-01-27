@@ -80,7 +80,7 @@ public class SuperAgent implements Agent
 				if (perceptName.equals("AT")) {
 					Matcher m = Pattern.compile("\\(\\s*AT DIRT\\s+([0-9]+)\\s+([0-9]+)\\s*\\)").matcher(percept);
 					if (m.matches()) {
-						System.out.print(dirtPoints);
+						//System.out.print(dirtPoints);
 						this.dirtPoints[i] = new Point(Integer.parseInt(m.group(1)),Integer.parseInt(m.group(2)));
 						field[dirtPoints[i].y - 1][dirtPoints[i].x - 1] = 'D';
 						i++;
@@ -113,8 +113,8 @@ public class SuperAgent implements Agent
 		}*/
 		BlindSearch search = new BlindSearch(environment);
 		Node node = search.BFS(dirtPoints, obstacles, size, home);
-		/*HeuristicSearch search = new HeuristicSearch(environment);
-		Node node = search.AstarSearch(dirtPoints, obstacles, size, home);*/
+		//HeuristicSearch search = new HeuristicSearch(environment);
+		//Node node = search.AstarSearch(dirtPoints, obstacles, size, home);
 		System.out.println("node: " + node);
 		actions = new Stack<String>();
 		orientation = new Stack<Character>();

@@ -7,7 +7,8 @@ public class HeuristicSearch {
 
 	Node root;
 	int sizeOfFrontier;
-	HashMap<String, Integer> visitedStates;
+	//HashMap<String, Integer> visitedStates;
+	HashMap<Integer, Integer> visitedStates;
 	public HeuristicSearch(State state)
 	{
 		root = new Node(state);
@@ -152,7 +153,8 @@ public class HeuristicSearch {
 	    }
 	});
 	pq.add(root);
-	visitedStates = new HashMap<String, Integer>();
+	//visitedStates = new HashMap<String, Integer>();
+	visitedStates = new HashMap<Integer, Integer>();
 	Node currNode;
 	while(!pq.isEmpty())
 	{
@@ -193,7 +195,8 @@ public class HeuristicSearch {
 			}
 			currNode = new Node(node.state.act(string), node);
 			currNode.state.heuristicCost = moves[i];
-			String str = hashState(currNode.state);
+			//String str = hashState(currNode.state);
+			int str = hashState(currNode.state);
 			if(visitedStates.containsKey(str))
 			{
 				continue;
@@ -222,7 +225,7 @@ public class HeuristicSearch {
 		}
 		return dirtCount;
 	}
-	public String hashState(State state)
+	/*public String hashState(State state)
 	{
 		String str = "";
 		for(boolean dirt:state.dirts)
@@ -238,6 +241,24 @@ public class HeuristicSearch {
 		}
 		str += state.posx + "" + state.posy + "" + (int)state.orientation;
 		return str;
+	}*/
+	public int hashState(State state)
+	{
+		// Hash is now an integer with one bit for each dirt (max 16 dirt),
+		// 7 bits for x & y coordinates (max 128 x 128 board) and 2 bits for orientation
+		// hash = DDDD DDDD DDDD DDDD  XXXX XXXY YYYY YYOO
+		int hash = 0;
+		for(int i = 0; i < state.dirts.length; i++) 
+		{
+			if(state.dirts[i]) hash += 1 << (31 - i);
+		}
+		hash += state.posx << 9;
+		hash += state.posy << 2;
+		if(state.orientation == 'N') hash += 0;
+		if(state.orientation == 'E') hash += 1;
+		if(state.orientation == 'S') hash += 2;
+		if(state.orientation == 'W') hash += 3;
+		return hash;
 	}
 	
 	public static void main(String[] args) 
