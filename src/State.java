@@ -41,25 +41,7 @@ public class State
 			{
 				actions[1] = "GO";
 			}
-			
-			/*
-			if(orientation == 'N' && (posy == 1 || obstacles[posy - 2][posx - 1]))
-			{
-				actions.remove("GO");
-			}
-			else if(orientation == 'W' && (posx == 1 || obstacles[posy - 1][posx - 2]))
-			{
-				actions.remove("GO");
-			}
-			else if(orientation == 'E' && (posx == size.x || obstacles[posy - 1][posx]))
-			{
-				actions.remove("GO");
-			}
-			else if(orientation == 'S' && (posy == size.y || obstacles[posy][posx - 1]))
-			{
-				actions.remove("GO");
-			}
-			*/						
+								
 	    }
 		public State act(String s)
 		{

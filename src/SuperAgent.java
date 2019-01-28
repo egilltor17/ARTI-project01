@@ -111,8 +111,8 @@ public class SuperAgent implements Agent
 			System.out.println(environment.dirts[k]);
 			//System.out.println(dirt[k].x + " " + dirt[k].y);
 		}*/
-		/*BlindSearch search = new BlindSearch(environment);
-		Node node = search.BFS(dirtPoints, obstacles, size, home);*/
+		//BlindSearch search = new BlindSearch(environment);
+		//Node node = search.BFS(dirtPoints, obstacles, size, home);
 		HeuristicSearch search = new HeuristicSearch(environment);
 		Node node = search.AstarSearch(dirtPoints, obstacles, size, home);
 		System.out.println("node: " + node);
