@@ -102,10 +102,10 @@ public class SuperAgent implements Agent
 		this.environment.lastAction = "TURN_ON";
 		this.environment.pathCost = 0;
 		
-		//BlindSearch search = new BlindSearch(environment);
-		//Node node = search.BFS(dirtPoints, obstacles, size, home);
-		HeuristicSearch search = new HeuristicSearch(environment);
-		Node node = search.AstarSearch(dirtPoints, obstacles, size, home);
+		BlindSearch search = new BlindSearch(environment);
+		Node node = search.BFS(dirtPoints, obstacles, size, home);
+		//HeuristicSearch search = new HeuristicSearch(environment);
+		//Node node = search.AstarSearch(dirtPoints, obstacles, size, home);
 		//System.out.println("node: " + node);
 		actions = new Stack<String>();
 		orientation = new Stack<Character>();
@@ -117,6 +117,7 @@ public class SuperAgent implements Agent
 			locations.push(new Point(node.state.posx, node.state.posy));
 			node = node.parent;
 		}
+		
     }
     private void printField()
     {
@@ -134,7 +135,6 @@ public class SuperAgent implements Agent
     public String nextAction(Collection<String> percepts) {
     	if(actions == null || actions.isEmpty())
     	{
-    		System.out.print("Stack is empty");
     		return "TURN_OFF";
     	}
     	Point location = locations.pop();

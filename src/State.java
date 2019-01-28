@@ -110,6 +110,7 @@ public class State
 	    }
 	    private State suck(State state)
 	    {
+	    	pathCost--;
 	    	state.lastAction = "SUCK";
 	    	return state;
 	    }

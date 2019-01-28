@@ -10,6 +10,7 @@ public class HeuristicSearch {
 	Node root;
 	int sizeOfFrontier;
 	int currCost;
+	int expansionCount;
 	//HashMap<String, Integer> visitedStates;
 	HashMap<Integer, Integer> visitedStates;
 	public HeuristicSearch(State state)
@@ -177,10 +178,6 @@ public class HeuristicSearch {
 					}
 					visitedStates.put(hash, 0);
 					que.add(currNode);
-					if(string == "SUCK")
-					{
-						break;
-					}
 				}
 			}
 		}
@@ -222,11 +219,13 @@ public class HeuristicSearch {
 			currCost = node.state.heuristicCost + node.state.pathCost;
 			if(node.state.searchGoalState(node.state, home))
 			{
-				System.out.println("Shit's done  " + sizeOfFrontier);
+				System.out.println("Size of frontier: " + sizeOfFrontier);
+				System.out.println("expansion count: " + expansionCount);
 				return node;
 			}
 			int farthestDist = 0;
 			Point farthestDirt = null;
+			expansionCount++;
 			for(int i = 0; i < dirtPoints.length; i++)
 			{
 				if(!node.state.dirts[i])
@@ -268,6 +267,7 @@ public class HeuristicSearch {
 				}
 				if(string == "SUCK")
 				{
+					expansionCount--;
 					break;
 				}
 			}

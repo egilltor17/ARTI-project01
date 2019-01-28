@@ -83,7 +83,8 @@ public class BlindSearch {
 			Node node = que.remove();
 			if(node.state.searchGoalState(node.state, home))
 			{
-				System.out.println("Shit's done  " + sizeOfFrontier);
+				System.out.println("Size of frontier: " + sizeOfFrontier);
+				System.out.println("expansion count: " + expansionCount);
 				return node;
 			}
 			expansionCount++;
