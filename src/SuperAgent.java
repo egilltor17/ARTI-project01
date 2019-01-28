@@ -5,17 +5,17 @@ import java.util.regex.Pattern;
 
 public class SuperAgent implements Agent
 {
-	private Stack<String> actions;				// the 
-	private State environment;
-	public Point home;							// the starting pint 
+	private Stack<String> actions;				// the path found to the goal state
+	private State environment;					// the starting state
+	public Point home;							// the starting point 
 	public Point size; 							// the greatest point in the field
 	public Point[] dirtPoints;					// an array of all dirt points in the field 
 	public boolean[][] obstacles;				// an array of all the obstacles in the field 
 	public int dirtsCount;						// the number of dirt points
-	public char[][] field;						// an array of the field, used to print 
-	Stack<Point> locations;						
-	Stack<Character> orientation;
-	Point lastField;
+	public char[][] field;						// used to print 
+	//private Stack<Point> locations;			// used to print	
+	//private Stack<Character> orientation;		// used to print
+	private Point lastField;					// used to print
 
 
     public void init(Collection<String> percepts) {
@@ -78,7 +78,6 @@ public class SuperAgent implements Agent
 				if (perceptName.equals("AT")) {
 					Matcher m = Pattern.compile("\\(\\s*AT DIRT\\s+([0-9]+)\\s+([0-9]+)\\s*\\)").matcher(percept);
 					if (m.matches()) {
-						//System.out.print(dirtPoints);
 						this.dirtPoints[i] = new Point(Integer.parseInt(m.group(1)),Integer.parseInt(m.group(2)));
 						field[dirtPoints[i].y - 1][dirtPoints[i].x - 1] = 'D';
 						i++;
@@ -107,20 +106,25 @@ public class SuperAgent implements Agent
 		HeuristicSearch search = new HeuristicSearch(environment);
 		Node node = search.AstarSearch(dirtPoints, obstacles, size, home);
 		actions = new Stack<String>();
-		//orientation = new Stack<Character>();
-		//locations = new Stack<Point>();
+		
+		/*  // un-comment to use printFeild()
+		orientation = new Stack<Character>();
+		locations = new Stack<Point>();
+		*/
+		
 		while(node != null)
 		{
 			actions.push(node.state.lastAction);
-			//orientation.push(node.state.orientation);
-			//locations.push(new Point(node.state.posx, node.state.posy));
+			/*  // un-comment to use printFeild()
+			orientation.push(node.state.orientation);
+			locations.push(new Point(node.state.posx, node.state.posy));
+			*/
 			node = node.parent;
 		}
 		
     }
-    /*
-     * 1. 63 2. 59 3. 724 4. 808 5. 840 6. 835 7. 724 8. 703 9. 708
-     */
+    
+    // Prints the state of the field
     private void printField()
     {
 		System.out.println();
@@ -134,16 +138,19 @@ public class SuperAgent implements Agent
 		}
 		System.out.println();
     }
+    // Returns the next action 
     public String nextAction(Collection<String> percepts) {
     	if(actions == null || actions.isEmpty())
     	{
     		return "TURN_OFF";
     	}
-    	/*Point location = locations.pop();
+    	/*  // un-comment to use printFeild() 
+    	Point location = locations.pop();
     	field[lastField.y - 1][lastField.x - 1] = ' ';
     	field[location.y - 1][location.x - 1] = orientation.pop();
     	lastField = location;
-    	printField();*/
+    	printField();
+    	*/
     	return actions.pop();
 	}
 }

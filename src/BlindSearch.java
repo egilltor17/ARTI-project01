@@ -30,7 +30,14 @@ public class BlindSearch {
 		visitedStates.put(hash, 0);
 		return false;
 	}
-	
+	/**
+	 * Function used to determine if a dirt is reachable before running the search 
+	 * @param dirtPoints - array of all dirt Points
+	 * @param dirts - array of all dirts cleaned (one to one indexed to dirtPoints)
+	 * @param obstacles - 2d array of obstacles 
+	 * @param size - the greatest point in the field
+	 * @param home - the starting point
+	 */
 	public void reachableDirt(Point[] dirtPoints, boolean[] dirts, boolean[][] obstacles, Point size, Point home)
 	{
 		Node[] reachableDirt = new Node[dirtPoints.length];
