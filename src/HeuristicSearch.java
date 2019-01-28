@@ -6,10 +6,10 @@ import java.util.Queue;
 
 public class HeuristicSearch {
 
-	Node root;
-	int sizeOfFrontier;
-	int expansionCount;
-	HashMap<Integer, Integer> visitedStates;
+	private Node root;
+	private int sizeOfFrontier;
+	private int expansionCount;
+	private HashMap<Integer, Integer> visitedStates;
 	
 	public HeuristicSearch(State state)
 	{
@@ -48,12 +48,12 @@ public class HeuristicSearch {
 	}
 	
 	/**
-	 * Function used to determine if a dirt is reachable 
-	 * @param dirtPoints
-	 * @param dirts
-	 * @param obstacles
-	 * @param size
-	 * @param home
+	 * Function used to determine if a dirt is reachable before running the search 
+	 * @param dirtPoints - array of all dirt Points
+	 * @param dirts - array of all dirts cleaned (one to one indexed to dirtPoints)
+	 * @param obstacles - 2d array of obstacles 
+	 * @param size - the greatest point in the field
+	 * @param home - the starting point
 	 */
 	public void reachableDirt(Point[] dirtPoints, boolean[] dirts, boolean[][] obstacles, Point size, Point home)
 	{
@@ -179,15 +179,5 @@ public class HeuristicSearch {
 			}
 		}
 		return null;
-	}
-	
-	public int[] dirtRemainingHeuristics(State state) 
-	{
-		int dirtCount = 0;
-		for(boolean b:state.dirts) 
-		{
-			if(!b) dirtCount++;
-		}
-		return new int[] {dirtCount, dirtCount, dirtCount};
 	}
 }

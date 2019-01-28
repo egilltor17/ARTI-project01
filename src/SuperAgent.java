@@ -12,10 +12,13 @@ public class SuperAgent implements Agent
 	public Point[] dirtPoints;					// an array of all dirt points in the field 
 	public boolean[][] obstacles;				// an array of all the obstacles in the field 
 	public int dirtsCount;						// the number of dirt points
+	
+	/*
 	public char[][] field;						// used to print 
-	//private Stack<Point> locations;			// used to print	
-	//private Stack<Character> orientation;		// used to print
+	private Stack<Point> locations;				// used to print	
+	private Stack<Character> orientation;		// used to print
 	private Point lastField;					// used to print
+	*/
 
 
     public void init(Collection<String> percepts) {
@@ -55,8 +58,10 @@ public class SuperAgent implements Agent
 					if (m.matches()) {
 						this.size = new Point(Integer.parseInt(m.group(1)),Integer.parseInt(m.group(2)));
 						this.obstacles = new boolean[size.y][size.x];
+						/*	// un-comment to use printField()
 						this.field = new char[size.y][size.x];
 						lastField = new Point(home.x, home.y);
+						*/
 					}
 				}
 				else if (perceptName.equals("AT")) {
@@ -79,32 +84,38 @@ public class SuperAgent implements Agent
 					Matcher m = Pattern.compile("\\(\\s*AT DIRT\\s+([0-9]+)\\s+([0-9]+)\\s*\\)").matcher(percept);
 					if (m.matches()) {
 						this.dirtPoints[i] = new Point(Integer.parseInt(m.group(1)),Integer.parseInt(m.group(2)));
+						/*  // un-comment to use printField()
 						field[dirtPoints[i].y - 1][dirtPoints[i].x - 1] = 'D';
+						*/
 						i++;
 					}
 					m = Pattern.compile("\\(\\s*AT OBSTACLE\\s+([0-9]+)\\s+([0-9]+)\\s*\\)").matcher(percept);
 					if (m.matches()) {
 						this.obstacles[Integer.parseInt(m.group(2)) - 1][Integer.parseInt(m.group(1)) - 1] = true;
+						/* // un-comment to use printField()
 						field[Integer.parseInt(m.group(2)) - 1][Integer.parseInt(m.group(1)) - 1] = 'X';
+						*/
 					}
 				}
 			} else {
 				System.err.println("strange percept that does not match pattern: " + percept);
 			}
 		}
+		/*  // un-comment to use printField()
 		field[home.y - 1][home.x - 1] = environment.orientation;
-		System.out.println();
 		printField();
+		*/
 		this.environment.dirts = new boolean[dirtsCount];
 		this.environment.lastAction = "TURN_ON";
 		this.environment.pathCost = 0;
 		
-		//BlindSearch search = new BlindSearch(environment);
+		BlindSearch search = new BlindSearch(environment);
 		//Node node = search.BFS(dirtPoints, obstacles, size, home);
 		//Node node = search.DFS(dirtPoints, obstacles, size, home);
-		//Node node = search.UCS(dirtPoints, obstacles, size, home);
-		HeuristicSearch search = new HeuristicSearch(environment);
-		Node node = search.AstarSearch(dirtPoints, obstacles, size, home);
+		Node node = search.UCS(dirtPoints, obstacles, size, home);
+		
+		//HeuristicSearch search = new HeuristicSearch(environment);
+		//Node node = search.AstarSearch(dirtPoints, obstacles, size, home);
 		actions = new Stack<String>();
 		
 		/*  // un-comment to use printFeild()
@@ -124,6 +135,7 @@ public class SuperAgent implements Agent
 		
     }
     
+    /*
     // Prints the state of the field
     private void printField()
     {
@@ -137,7 +149,10 @@ public class SuperAgent implements Agent
 			System.out.println();
 		}
 		System.out.println();
+
     }
+    */
+    
     // Returns the next action 
     public String nextAction(Collection<String> percepts) {
     	if(actions == null || actions.isEmpty())

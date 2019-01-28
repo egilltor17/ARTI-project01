@@ -12,9 +12,5 @@ public class Point
 	public int manhatanDist(Point p)
 	{
 		return Math.abs(this.x - p.x) + Math.abs(this.x - p.y);
-		/*int xx = Math.abs(this.x - p.x);
-		int yy = Math.abs(this.x - p.y);
-		if((xx == 0) || (yy == 0)) return xx + yy;
-		return xx + yy + 1;*/
 	}
 }
