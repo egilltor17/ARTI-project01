@@ -101,21 +101,12 @@ public class SuperAgent implements Agent
 		this.environment.dirts = new boolean[dirtsCount];
 		this.environment.lastAction = "TURN_ON";
 		this.environment.pathCost = 0;
-		/*System.out.println("height: "+ size.x);
-		System.out.println("with: " + size.y);
-		System.out.println("xPos: " + environment.posx);
-		System.out.println("yPos: " + environment.posy);
-		System.out.println("Ort: " + environment.orientation);
-		for(int k = 0; k < dirtsCount; k++)
-		{
-			System.out.println(environment.dirts[k]);
-			//System.out.println(dirt[k].x + " " + dirt[k].y);
-		}*/
+		
 		//BlindSearch search = new BlindSearch(environment);
 		//Node node = search.BFS(dirtPoints, obstacles, size, home);
 		HeuristicSearch search = new HeuristicSearch(environment);
 		Node node = search.AstarSearch(dirtPoints, obstacles, size, home);
-		System.out.println("node: " + node);
+		//System.out.println("node: " + node);
 		actions = new Stack<String>();
 		orientation = new Stack<Character>();
 		locations = new Stack<Point>();

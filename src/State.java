@@ -23,13 +23,14 @@ public class State
 		
 		public void listOfActions(Node node, Point[] dirtPoints, boolean[][] obstacles, Point size)
 	    {
-			actions = new String[] {"TURN_LEFT", "", "TURN_RIGHT"};
+			actions = new String[] {"", "TURN_LEFT", "TURN_RIGHT"};
 			for(int i = 0; i < dirtPoints.length; i++)
 			{
 				if(this.posx == dirtPoints[i].x && this.posy == dirtPoints[i].y && !this.dirts[i])
 				{
 					this.dirts[i] = true;
 					actions[0] = "SUCK";
+					actions[1] = "";
 					actions[2] = "";
 					return;
 				}
@@ -39,7 +40,7 @@ public class State
 			  || (orientation == 'E' && (posx == size.x || obstacles[posy - 1][posx]))
 			  || (orientation == 'N' && (posy == size.y || obstacles[posy][posx - 1])))) 
 			{
-				actions[1] = "GO";
+				actions[0] = "GO";
 			}
 								
 	    }
@@ -167,6 +168,24 @@ public class State
 	    	state.lastAction = "GO";
 	    	return state;
 	    }
+	    public int hashState(State state)
+		{
+			// Hash is now an integer with one bit for each dirt (max 16 dirt),
+			// 7 bits for x & y coordinates (max 128 x 128 board) and 2 bits for orientation
+			// hash = DDDD DDDD DDDD DDDD  XXXX XXXY YYYY YYOO
+			int hash = 0;
+			for(int i = 0; i < state.dirts.length; i++)
+			{
+				if(state.dirts[i]) hash += 1 << (31 - i);
+			}
+			hash += state.posx << 9;
+			hash += state.posy << 2;
+			if(state.orientation == 'N') hash += 0;
+			if(state.orientation == 'E') hash += 1;
+			if(state.orientation == 'S') hash += 2;
+			if(state.orientation == 'W') hash += 3;
+			return hash;
+		}
 	    public String toString() 
 	    {
 	    	return "State is ok.";
