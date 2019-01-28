@@ -102,23 +102,27 @@ public class SuperAgent implements Agent
 		this.environment.lastAction = "TURN_ON";
 		this.environment.pathCost = 0;
 		
-		BlindSearch search = new BlindSearch(environment);
-		Node node = search.BFS(dirtPoints, obstacles, size, home);
-		//HeuristicSearch search = new HeuristicSearch(environment);
-		//Node node = search.AstarSearch(dirtPoints, obstacles, size, home);
-		//System.out.println("node: " + node);
+		//BlindSearch search = new BlindSearch(environment);
+		//Node node = search.BFS(dirtPoints, obstacles, size, home);
+		//Node node = search.DFS(dirtPoints, obstacles, size, home);
+		//Node node = search.UCS(dirtPoints, obstacles, size, home);
+		HeuristicSearch search = new HeuristicSearch(environment);
+		Node node = search.AstarSearch(dirtPoints, obstacles, size, home);
 		actions = new Stack<String>();
-		orientation = new Stack<Character>();
-		locations = new Stack<Point>();
+		//orientation = new Stack<Character>();
+		//locations = new Stack<Point>();
 		while(node != null)
 		{
 			actions.push(node.state.lastAction);
-			orientation.push(node.state.orientation);
-			locations.push(new Point(node.state.posx, node.state.posy));
+			//orientation.push(node.state.orientation);
+			//locations.push(new Point(node.state.posx, node.state.posy));
 			node = node.parent;
 		}
 		
     }
+    /*
+     * 1. 63 2. 59 3. 724 4. 808 5. 840 6. 835 7. 724 8. 703 9. 708
+     */
     private void printField()
     {
 		System.out.println();
@@ -137,11 +141,11 @@ public class SuperAgent implements Agent
     	{
     		return "TURN_OFF";
     	}
-    	Point location = locations.pop();
+    	/*Point location = locations.pop();
     	field[lastField.y - 1][lastField.x - 1] = ' ';
     	field[location.y - 1][location.x - 1] = orientation.pop();
     	lastField = location;
-    	printField();
+    	printField();*/
     	return actions.pop();
 	}
 }
