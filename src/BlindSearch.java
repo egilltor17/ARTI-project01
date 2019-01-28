@@ -4,32 +4,33 @@ import java.util.HashMap;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Stack;
-//import java.util.Stack;
 
 public class BlindSearch {
 	
 	Node root;
-	int sizeOfFrontier;
-	int expansionCount;
-	//HashMap<String, Integer> visitedStates;
-	HashMap<Integer, Integer> visitedStates;
+	int sizeOfFrontier;							// used for measurements
+	int expansionCount;							// used for measurements
+	HashMap<Integer, Integer> visitedStates;	// Hash map with the state hashed as the key and the (pathCost + heuristicCost) as the value
+	
 	public BlindSearch(State state)
 	{
 		sizeOfFrontier = 0;
 		expansionCount = 0;
 		root = new Node(state);
 	}
+	
 	@SuppressWarnings("unused")
 	private boolean checkVisited(Node currNode)
 	{
-		int str = currNode.state.hashState(currNode.state);
-		if(visitedStates.containsKey(str))
+		int hash = currNode.state.hashState(currNode.state);
+		if(visitedStates.containsKey(hash))
 		{
 			return true;
 		}
-		visitedStates.put(str, 0);
+		visitedStates.put(hash, 0);
 		return false;
 	}
+	
 	public void reachableDirt(Point[] dirtPoints, boolean[] dirts, boolean[][] obstacles, Point size, Point home)
 	{
 		Node[] reachableDirt = new Node[dirtPoints.length];
@@ -70,12 +71,16 @@ public class BlindSearch {
 			
 		}
 	}
+	
+	
+	// **************************************************************************************************************************
+	// *********************************************** Breadth First Search *****************************************************
+	// **************************************************************************************************************************
 	public Node BFS(Point[] dirtPoints, boolean[][] obstacles, Point size, Point home)
 	{
 		reachableDirt(dirtPoints, root.state.dirts, obstacles, size, home);
 		Queue<Node> que = new ArrayDeque<Node>();
 		que.add(root);
-		//visitedStates = new HashMap<String, Integer>();
 		visitedStates = new HashMap<Integer, Integer>();
 		Node currNode;
 		while(!que.isEmpty())
@@ -116,61 +121,12 @@ public class BlindSearch {
 		}
 		return null;
 	}
-	public Node UCS(Point[] dirtPoints, boolean[][] obstacles, Point size, Point home)
-	{
-		reachableDirt(dirtPoints, root.state.dirts, obstacles, size, home);
-		PriorityQueue<Node> pq = new PriorityQueue<Node>( new Comparator<Node>() {
-		    public int compare(Node n1, Node n2) {
-		        if(n1.state.pathCost < n2.state.pathCost)
-		        {
-		        	return -1;
-		        }
-		        if(n1.state.pathCost == n2.state.pathCost)
-		        {
-		        	return 0;
-		        }
-		        return 1;
-		    }
-		});
-		pq.add(root);
-		//visitedStates = new HashMap<String, Integer>();
-		visitedStates = new HashMap<Integer, Integer>();
-		Node currNode;
-		while(!pq.isEmpty())
-		{
-			Node node = pq.poll();
-			if(node.state.searchGoalState(node.state, home))
-			{
-				System.out.println("Shit's done  " + sizeOfFrontier);
-				return node;
-			}
-			node.state.listOfActions(node, dirtPoints, obstacles, size);	// void function
-			for(String string:node.state.actions)
-			{
-				if(string.equals(""))
-				{
-					continue;
-				}
-				currNode = new Node(node.state.act(string), node);
-				int hash = node.state.hashState(currNode.state);
-				if(visitedStates.containsKey(hash))
-				{
-					continue;
-				}
-				visitedStates.put(hash, 0);
-				pq.add(currNode);
-				if(sizeOfFrontier < pq.size())
-				{
-					sizeOfFrontier = pq.size();
-				}
-				if(string == "SUCK")
-				{
-					break;
-				}
-			}
-		}
-		return null;
-	}
+	
+	
+	
+	// **************************************************************************************************************************
+	// *********************************************** Depth First Search *******************************************************
+	// **************************************************************************************************************************
 	public Node DFS(Point[] dirtPoints, boolean[][] obstacles, Point size, Point home)
 	{
 		reachableDirt(dirtPoints, root.state.dirts, obstacles, size, home);
@@ -212,5 +168,65 @@ public class BlindSearch {
 			}
 		}
 		return currNode;
+	}
+	
+	
+	
+	// **************************************************************************************************************************
+	// *********************************************** Uniform Cost Search ******************************************************
+	// **************************************************************************************************************************
+	public Node UCS(Point[] dirtPoints, boolean[][] obstacles, Point size, Point home)
+	{
+		reachableDirt(dirtPoints, root.state.dirts, obstacles, size, home);
+		PriorityQueue<Node> pq = new PriorityQueue<Node>( new Comparator<Node>() {
+		    public int compare(Node n1, Node n2) {
+		        if(n1.state.pathCost < n2.state.pathCost)
+		        {
+		        	return -1;
+		        }
+		        if(n1.state.pathCost == n2.state.pathCost)
+		        {
+		        	return 0;
+		        }
+		        return 1;
+		    }
+		});
+		pq.add(root);
+		visitedStates = new HashMap<Integer, Integer>();
+		Node currNode;
+		while(!pq.isEmpty())
+		{
+			Node node = pq.poll();
+			if(node.state.searchGoalState(node.state, home))
+			{
+				System.out.println("Shit's done  " + sizeOfFrontier);
+				return node;
+			}
+			node.state.listOfActions(node, dirtPoints, obstacles, size);	// void function
+			for(String string:node.state.actions)
+			{
+				if(string.equals(""))
+				{
+					continue;
+				}
+				currNode = new Node(node.state.act(string), node);
+				int hash = node.state.hashState(currNode.state);
+				if(visitedStates.containsKey(hash))
+				{
+					continue;
+				}
+				visitedStates.put(hash, 0);
+				pq.add(currNode);
+				if(sizeOfFrontier < pq.size())
+				{
+					sizeOfFrontier = pq.size();
+				}
+				if(string == "SUCK")
+				{
+					break;
+				}
+			}
+		}
+		return null;
 	}
 }

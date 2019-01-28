@@ -21,11 +21,19 @@ public class State
 			this.pathCost = state.pathCost + 1;
 		}
 		
+		/**
+		 * ListOfActions determines the available actions 
+		 * @param node - The current node, used to get access to it's state
+		 * @param dirtPoints - An array of Points containing dirt
+		 * @param obstacles - A 2d boolean array in which obstacles are represented by the value true
+		 * @param size - The maximal point in the field
+		 */
 		public void listOfActions(Node node, Point[] dirtPoints, boolean[][] obstacles, Point size)
 	    {
 			actions = new String[] {"", "TURN_LEFT", "TURN_RIGHT"};
 			for(int i = 0; i < dirtPoints.length; i++)
 			{
+				// Enforces the bot to "SUCK" if it is in a point with with a dirt
 				if(this.posx == dirtPoints[i].x && this.posy == dirtPoints[i].y && !this.dirts[i])
 				{
 					this.dirts[i] = true;
@@ -35,6 +43,7 @@ public class State
 					return;
 				}
 			}
+			// Sets the first action to "GO" if there is not an obstacle in front of the bot
 			if(!((orientation == 'S' && (posy == 1  || obstacles[posy - 2][posx - 1])) 
 			  || (orientation == 'W' && (posx == 1  || obstacles[posy - 1][posx - 2]))
 			  || (orientation == 'E' && (posx == size.x || obstacles[posy - 1][posx]))
@@ -44,6 +53,8 @@ public class State
 			}
 								
 	    }
+		
+		// Makes the bot perform an action
 		public State act(String s)
 		{
 			State state = new State(this);
@@ -64,6 +75,8 @@ public class State
 				return go(state);
 			}
 		}
+		
+		// Reorientates the bot counterclockwise 
 		private State turnLeft(State state)
 	    {
 	    	if(state.orientation == 'N')
@@ -86,6 +99,8 @@ public class State
 	    	return state;
 	    	
 	    }
+
+		// Reorientates the bot clockwise  
 	    private State turnRight(State state)
 	    {
 	    	if(state.orientation == 'N')
@@ -108,11 +123,15 @@ public class State
 	    	return state;
 	    	
 	    }
+
+	    // Makes the bot suck
 	    private State suck(State state)
 	    {
 	    	state.lastAction = "SUCK";
 	    	return state;
 	    }
+	    
+	    // Returns true if the bot has reached a specific position
 	    public boolean dirtGoalState(State state, Point target)
 	    {
 	    	if(state.posx == target.x && state.posy == target.y)
@@ -121,32 +140,21 @@ public class State
 	    	}
 	    	return false;
 	    }
+	    
+	    // Returns true if the bot has cleaned all the reachable dirt and returned to the home position
 	    public boolean searchGoalState (State state, Point home)
 	    {	
-	    	//boolean noDirtLeft = true;
 	    	for(boolean dirt:dirts)
 	    	{
-	    		if(dirt)
+	    		if(!dirt)
 	    		{
-	    			//System.out.print("X");
-	    		}
-	    		else
-	    		{
-	    			//System.out.print("_");
-	    			//noDirtLeft = false;
 	    			return false;
 	    		}
 	    	}
-	    	/*
-	    	System.out.println();
-	    	if(!noDirtLeft)
-    		{
-	    		return noDirtLeft;
-    		}
-	    	System.out.print("Pos:  " + state.posx + " " + state.posy + "\n");
-	    	*/
 	    	return (state.posx == home.x && state.posy == home.y);
 	    }
+	    
+	    // Moves the bot in the correct orientation 
 	    private State go(State state)
 	    {
 	    	if(state.orientation == 'S')
@@ -168,11 +176,17 @@ public class State
 	    	state.lastAction = "GO";
 	    	return state;
 	    }
+	    
+	    /**
+	     *  Hashes a state to an integer 
+		 *  with the first 16 bits used for dirt (one bit for each dirt like binary),
+		 *  7 bits for x & y coordinates individually (max 128 x 128 board) and 2 bits for orientation
+		 *  hash = DDDD DDDD DDDD DDDD  XXXX XXXY YYYY YYOO
+	     * @param state - The state to be hashed
+	     * @return hash - integer 
+	     */
 	    public int hashState(State state)
 		{
-			// Hash is now an integer with one bit for each dirt (max 16 dirt),
-			// 7 bits for x & y coordinates (max 128 x 128 board) and 2 bits for orientation
-			// hash = DDDD DDDD DDDD DDDD  XXXX XXXY YYYY YYOO
 			int hash = 0;
 			for(int i = 0; i < state.dirts.length; i++)
 			{
@@ -180,14 +194,10 @@ public class State
 			}
 			hash += state.posx << 9;
 			hash += state.posy << 2;
-			if(state.orientation == 'N') hash += 0;
-			if(state.orientation == 'E') hash += 1;
-			if(state.orientation == 'S') hash += 2;
-			if(state.orientation == 'W') hash += 3;
+			if(state.orientation == 'N') {hash += 0;}
+			if(state.orientation == 'E') {hash += 1;}
+			if(state.orientation == 'S') {hash += 2;}
+			if(state.orientation == 'W') {hash += 3;}
 			return hash;
 		}
-	    public String toString() 
-	    {
-	    	return "State is ok.";
-	    }
 	}

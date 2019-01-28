@@ -1,5 +1,4 @@
 import java.util.ArrayDeque;
-//import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.PriorityQueue;
@@ -11,10 +10,12 @@ public class HeuristicSearch {
 	int sizeOfFrontier;
 	int expansionCount;
 	HashMap<Integer, Integer> visitedStates;
+	
 	public HeuristicSearch(State state)
 	{
 		root = new Node(state);
 	}
+	
 	/**
 	 * Returns an array with the weighted heuristics for turning left, going straight and turning right
 	 * @param state   -  Initial state
@@ -23,14 +24,14 @@ public class HeuristicSearch {
 	 */
 	public int[] singleManhatanHeuristic(State state, Point target)
 	{	
-		int N = target.manhatanDist(new Point(state.posx, state.posy));
+		int N = target.manhatanDist(new Point(state.posx, state.posy + 1));
 		int E = target.manhatanDist(new Point(state.posx + 1, state.posy));
 		int S = target.manhatanDist(new Point(state.posx, state.posy - 1));
 		int W = target.manhatanDist(new Point(state.posx - 1, state.posy));
 		
 		if(state.orientation == 'N' ) 
 		{
-			return new int[] { N, N + 1, N + 1};
+			return new int[] { N, W + 1, E + 1};
 		} 
 		else if(state.orientation == 'E' ) 
 		{
@@ -46,6 +47,14 @@ public class HeuristicSearch {
 		} 
 	}
 	
+	/**
+	 * Function used to determine if a dirt is reachable 
+	 * @param dirtPoints
+	 * @param dirts
+	 * @param obstacles
+	 * @param size
+	 * @param home
+	 */
 	public void reachableDirt(Point[] dirtPoints, boolean[] dirts, boolean[][] obstacles, Point size, Point home)
 	{
 		Node[] reachableDirt = new Node[dirtPoints.length];
@@ -87,10 +96,15 @@ public class HeuristicSearch {
 		}
 	}
 	
+	
+	// **************************************************************************************************************************
+	// *********************************************** A* Search ****************************************************************
+	// **************************************************************************************************************************
 	public Node AstarSearch(Point[] dirtPoints, boolean[][] obstacles, Point size, Point home)
 	{
 		reachableDirt(dirtPoints, root.state.dirts, obstacles, size, home);
 		PriorityQueue<Node> pq = new PriorityQueue<Node>( new Comparator<Node>() {
+		// over writes the compare function for Node to include the heuristic cost
 		public int compare(Node n1, Node n2) {
 	        if(n1.state.pathCost + n1.state.heuristicCost < n2.state.pathCost + n2.state.heuristicCost)
 	        {
@@ -115,7 +129,7 @@ public class HeuristicSearch {
 				System.out.println("expansion count: " + expansionCount);
 				return node;
 			}
-			int closestDist = 1000;
+			int closestDist = 10000;
 			Point closestDirt = null;
 			expansionCount++;
 			for(int i = 0; i < dirtPoints.length; i++)

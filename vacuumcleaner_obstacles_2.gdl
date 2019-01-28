@@ -388,7 +388,7 @@
 (succ 98 99)
 (succ 99 100)
 
-(maxnumber 100)
+(maxnumber 1)
 
 (number 0)
 (<= (number ?y)

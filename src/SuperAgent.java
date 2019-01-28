@@ -5,24 +5,22 @@ import java.util.regex.Pattern;
 
 public class SuperAgent implements Agent
 {
-	private Stack<String> actions;
+	private Stack<String> actions;				// the 
 	private State environment;
-	public Point home;
-	public Point size; // the greatest point in the field
-	public Point[] dirtPoints;
-	public boolean[][] obstacles;
-	public int dirtsCount;
-	public char[][] field;
-	Stack<Point> locations;
+	public Point home;							// the starting pint 
+	public Point size; 							// the greatest point in the field
+	public Point[] dirtPoints;					// an array of all dirt points in the field 
+	public boolean[][] obstacles;				// an array of all the obstacles in the field 
+	public int dirtsCount;						// the number of dirt points
+	public char[][] field;						// an array of the field, used to print 
+	Stack<Point> locations;						
 	Stack<Character> orientation;
 	Point lastField;
-	/*
-		init(Collection<String> percepts) is called once before you have to select the first action. Use it to find a plan. Store the plan and just execute it step by step in nextAction.
-	*/
+
 
     public void init(Collection<String> percepts) {
 		/*
-			Possible percepts are:
+			Possible precepts are:
 			- "(SIZE x y)" denoting the size of the environment, where x,y are integers
 			- "(HOME x y)" with x,y >= 1 denoting the initial position of the robot
 			- "(ORIENTATION o)" with o in {"NORTH", "SOUTH", "EAST", "WEST"} denoting the initial orientation of the robot

@@ -17,8 +17,4 @@ public class Node{
 		{
 			return n1.state.pathCost < n2.state.pathCost;
 		}
-		public void setChildren(Node[] n)
-		{
-			children = n;
-		}
 	}
