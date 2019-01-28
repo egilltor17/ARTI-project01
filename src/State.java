@@ -1,14 +1,14 @@
 
 public class State 
 	{
-		boolean[] dirts;
-		short posx;
-		short posy;
-		char orientation;
-		String lastAction;
-		String[] actions;
-		int pathCost;
-		int heuristicCost;
+		public boolean[] dirts;
+		public short posx;
+		public short posy;
+		public char orientation;
+		public String lastAction;
+		public String[] actions;
+		public int pathCost;
+		public int heuristicCost;
 		
 		public State(){}
 		public State(State state)

@@ -13,9 +13,10 @@ public class SuperAgent implements Agent
 	public boolean[][] obstacles;				// an array of all the obstacles in the field 
 	public int dirtsCount;						// the number of dirt points
 	public char[][] field;						// an array of the field, used to print 
-	Stack<Point> locations;						
-	Stack<Character> orientation;
-	Point lastField;
+	//used with printfield
+	/*private Stack<Point> locations;						
+	private Stack<Character> orientation;
+	private Point lastField;*/
 
 
     public void init(Collection<String> percepts) {
@@ -56,7 +57,7 @@ public class SuperAgent implements Agent
 						this.size = new Point(Integer.parseInt(m.group(1)),Integer.parseInt(m.group(2)));
 						this.obstacles = new boolean[size.y][size.x];
 						this.field = new char[size.y][size.x];
-						lastField = new Point(home.x, home.y);
+						//lastField = new Point(home.x, home.y);
 					}
 				}
 				else if (perceptName.equals("AT")) {
@@ -94,18 +95,18 @@ public class SuperAgent implements Agent
 			}
 		}
 		field[home.y - 1][home.x - 1] = environment.orientation;
-		System.out.println();
-		printField();
+		//printField();
 		this.environment.dirts = new boolean[dirtsCount];
 		this.environment.lastAction = "TURN_ON";
 		this.environment.pathCost = 0;
 		
-		//BlindSearch search = new BlindSearch(environment);
+		BlindSearch search = new BlindSearch(environment);
 		//Node node = search.BFS(dirtPoints, obstacles, size, home);
 		//Node node = search.DFS(dirtPoints, obstacles, size, home);
-		//Node node = search.UCS(dirtPoints, obstacles, size, home);
-		HeuristicSearch search = new HeuristicSearch(environment);
-		Node node = search.AstarSearch(dirtPoints, obstacles, size, home);
+		Node node = search.UCS(dirtPoints, obstacles, size, home);
+		
+		//HeuristicSearch search = new HeuristicSearch(environment);
+		//Node node = search.AstarSearch(dirtPoints, obstacles, size, home);
 		actions = new Stack<String>();
 		//orientation = new Stack<Character>();
 		//locations = new Stack<Point>();
@@ -119,8 +120,6 @@ public class SuperAgent implements Agent
 		
     }
     /*
-     * 1. 63 2. 59 3. 724 4. 808 5. 840 6. 835 7. 724 8. 703 9. 708
-     */
     private void printField()
     {
 		System.out.println();
@@ -133,7 +132,7 @@ public class SuperAgent implements Agent
 			System.out.println();
 		}
 		System.out.println();
-    }
+    */
     public String nextAction(Collection<String> percepts) {
     	if(actions == null || actions.isEmpty())
     	{

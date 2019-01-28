@@ -7,10 +7,10 @@ import java.util.Stack;
 
 public class BlindSearch {
 	
-	Node root;
-	int sizeOfFrontier;							// used for measurements
-	int expansionCount;							// used for measurements
-	HashMap<Integer, Integer> visitedStates;	// Hash map with the state hashed as the key and the (pathCost + heuristicCost) as the value
+	private Node root;
+	private int sizeOfFrontier;							// used for measurements
+	private int expansionCount;							// used for measurements
+	private HashMap<Integer, Integer> visitedStates;	// Hash map with the state hashed as the key and the (pathCost + heuristicCost) as the value
 	
 	public BlindSearch(State state)
 	{

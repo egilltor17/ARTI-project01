@@ -6,10 +6,10 @@ import java.util.Queue;
 
 public class HeuristicSearch {
 
-	Node root;
-	int sizeOfFrontier;
-	int expansionCount;
-	HashMap<Integer, Integer> visitedStates;
+	private Node root;
+	private int sizeOfFrontier;
+	private int expansionCount;
+	private HashMap<Integer, Integer> visitedStates;
 	
 	public HeuristicSearch(State state)
 	{
