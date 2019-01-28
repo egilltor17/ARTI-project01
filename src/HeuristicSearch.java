@@ -1,7 +1,9 @@
+import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.PriorityQueue;
+import java.util.Queue;
 
 public class HeuristicSearch {
 
@@ -137,8 +139,64 @@ public class HeuristicSearch {
 			//return new int[] {distLeft[0], distFront[0], distRight[0]};  // Is not complete for multiple objectives. 
 		}
 	}
+	
+	public Node[] reachableDirt(Point[] dirtPoints, boolean[][] obstacles, Point size, Point home)
+	{
+		Node[] reachableDirt = new Node[dirtPoints.length];
+		for(int i = 0; i < dirtPoints.length; i++)
+		{
+			reachableDirt[i] = null;
+			Queue<Node> que = new ArrayDeque<Node>();
+			que.add(root);
+			//visitedStates = new HashMap<String, Integer>();
+			visitedStates = new HashMap<Integer, Integer>();
+			Node currNode;
+			while(!que.isEmpty())
+			{
+				Node node = que.remove();
+				if(node.state.dirtGoalState(node.state, dirtPoints[i]))
+				{
+					reachableDirt[i] = node;
+					break;
+				}
+				node.state.listOfActions(node, dirtPoints, obstacles, size);	// void function
+				for(String string:node.state.actions)
+				{
+					if(string.equals(""))
+					{
+						continue;
+					}
+					currNode = new Node(node.state.act(string), node);
+					//String str = hashState(currNode.state);
+					int str = hashState(currNode.state);
+					if(visitedStates.containsKey(str))
+					{
+						continue;
+					}
+					visitedStates.put(str, 0);
+					que.add(currNode);
+					if(string == "SUCK")
+					{
+						break;
+					}
+				}
+			}
+		}
+		return reachableDirt;
+	}
+	
 	public Node AstarSearch(Point[] dirtPoints, boolean[][] obstacles, Point size, Point home)
 	{
+		Node[] dirt = reachableDirt(dirtPoints, obstacles, size, home);
+		for(int i = 0; i < dirt.length; i++)
+		{
+			if(dirt[i] == null)
+			{
+				System.out.println("dirt is unreachable" + dirtPoints[i].x + " " + dirtPoints[i].y);
+				//this dirt is unreachable dont make the bot get it
+				root.state.dirts[i] = true;
+			}
+		}
 		PriorityQueue<Node> pq = new PriorityQueue<Node>( new Comparator<Node>() {
 		public int compare(Node n1, Node n2) {
 	        if(n1.state.pathCost + n1.state.heuristicCost < n2.state.pathCost + n2.state.heuristicCost)
@@ -150,81 +208,83 @@ public class HeuristicSearch {
 	        	return 0;
 	        }
 	        return 1;
-	    }
-	});
-	pq.add(root);
-	//visitedStates = new HashMap<String, Integer>();
-	visitedStates = new HashMap<Integer, Integer>();
-	Node currNode;
-	while(!pq.isEmpty())
-	{
-		Node node = pq.poll();
-		if(node.state.searchGoalState(node.state, home))
+	    	}
+		});
+		pq.add(root);
+		//visitedStates = new HashMap<String, Integer>();
+		visitedStates = new HashMap<Integer, Integer>();
+		Node currNode;
+		while(!pq.isEmpty())
 		{
-			System.out.println("Shit's done  " + sizeOfFrontier);
-			return node;
-		}
-		int closestDist = 1;
-		Point closestDirt = null;
-		for(int i = 0; i < dirtPoints.length; i++)
-		{
-			if(!node.state.dirts[i])
+			Node node = pq.poll();
+			if(node.state.searchGoalState(node.state, home))
 			{
-				int dist = dirtPoints[i].manhatanDist(new Point(node.state.posx, node.state.posy));
-				if(dist > closestDist)
+				System.out.println("Shit's done  " + sizeOfFrontier);
+				return node;
+			}
+			int closestDist = 1;
+			Point closestDirt = null;
+			for(int i = 0; i < dirtPoints.length; i++)
+			{
+				if(!node.state.dirts[i])
 				{
-					closestDist = dist;
-					closestDirt = dirtPoints[i];
+					int dist = dirtPoints[i].manhatanDist(new Point(node.state.posx, node.state.posy));
+					if(dist < closestDist)
+					{
+						closestDist = dist;
+						closestDirt = dirtPoints[i];
+					}
+				}
+			}
+			if(closestDirt == null)
+			{
+				closestDirt = home;
+			}
+			int[] moves = singleManhatanHeuristic(node.state, closestDirt);
+			//int[] moves = manhatanHeuristic(node.state, dirtPoints, home);
+			//int[] moves = dirtRemainingHeuristics(node.state)
+			node.state.listOfActions(node, dirtPoints, obstacles, size);	// void function
+			int i = -1;
+			for(String string:node.state.actions)
+			{
+				i++;
+				if(string.equals(""))
+				{
+					continue;
+				}
+				currNode = new Node(node.state.act(string), node);
+				currNode.state.heuristicCost = moves[i];
+				//String str = hashState(currNode.state);
+				int str = hashState(currNode.state);
+				if(visitedStates.containsKey(str))
+				{
+					continue;
+				}
+				visitedStates.put(str, currNode.state.pathCost + currNode.state.heuristicCost);
+				pq.add(currNode);
+				if(sizeOfFrontier < pq.size())
+				{
+					sizeOfFrontier = pq.size();
+				}
+				if(string == "SUCK")
+				{
+					break;
 				}
 			}
 		}
-		if(closestDirt == null)
-		{
-			closestDirt = home;
-		}
-		int[] moves = singleManhatanHeuristic(node.state, closestDirt);
-		//int[] moves = manhatanHeuristic(node.state, dirtPoints, home);
-		node.state.listOfActions(node, dirtPoints, obstacles, size);	// void function
-		int i = -1;
-		for(String string:node.state.actions)
-		{
-			i++;
-			if(string.equals(""))
-			{
-				continue;
-			}
-			currNode = new Node(node.state.act(string), node);
-			currNode.state.heuristicCost = moves[i];
-			//String str = hashState(currNode.state);
-			int str = hashState(currNode.state);
-			if(visitedStates.containsKey(str))
-			{
-				continue;
-			}
-			visitedStates.put(str, currNode.state.pathCost + currNode.state.heuristicCost);
-			pq.add(currNode);
-			if(sizeOfFrontier < pq.size())
-			{
-				sizeOfFrontier = pq.size();
-			}
-			if(string == "SUCK")
-			{
-				break;
-			}
-		}
-	}
-	return null;
+		return null;
 	}
 	
-	public int dirtRemainingHeuristics(State state) 
+	public int[] dirtRemainingHeuristics(State state) 
 	{
 		int dirtCount = 0;
 		for(boolean b:state.dirts) 
 		{
 			if(!b) dirtCount++;
 		}
-		return dirtCount;
+		return new int[] {dirtCount, dirtCount, dirtCount};
 	}
+	
 	/*public String hashState(State state)
 	{
 		String str = "";
@@ -260,11 +320,4 @@ public class HeuristicSearch {
 		if(state.orientation == 'W') hash += 3;
 		return hash;
 	}
-	
-	public static void main(String[] args) 
-	{
-		// TODO Auto-generated method stub
-
-	}
-
 }
