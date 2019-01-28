@@ -23,14 +23,14 @@ public class HeuristicSearch {
 	 */
 	public int[] singleManhatanHeuristic(State state, Point target)
 	{	
-		int N = target.manhatanDist(new Point(state.posx, state.posy));
+		int N = target.manhatanDist(new Point(state.posx, state.posy + 1));
 		int E = target.manhatanDist(new Point(state.posx + 1, state.posy));
 		int S = target.manhatanDist(new Point(state.posx, state.posy - 1));
 		int W = target.manhatanDist(new Point(state.posx - 1, state.posy));
 		
 		if(state.orientation == 'N' ) 
 		{
-			return new int[] { N, N + 1, N + 1};
+			return new int[] { N, W + 1, E + 1};
 		} 
 		else if(state.orientation == 'E' ) 
 		{
@@ -115,7 +115,7 @@ public class HeuristicSearch {
 				System.out.println("expansion count: " + expansionCount);
 				return node;
 			}
-			int closestDist = 1000;
+			int closestDist = 10000;
 			Point closestDirt = null;
 			expansionCount++;
 			for(int i = 0; i < dirtPoints.length; i++)
